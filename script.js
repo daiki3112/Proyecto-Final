@@ -1,90 +1,90 @@
 const productosIniciales = [
   {
     id: 1,
-    nombre: "Argollas Sol Dorado",
-    categoria: "argollas",
+    nombre: "Arete Flor de oro",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Argollas medianas con baño en oro golfi, ligeras para uso diario.",
+    descripcion: "Arete mediano, Con detalles en azul marino, ideales para uso diario.",
     imagen: "img/arete1.jpg"
   },
   {
     id: 2,
-    nombre: "Cascada Perla Natural",
-    categoria: "largos",
+    nombre: "Arete de perla negra",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Aretes largos con perlas de río y detalle delicado en acero.",
+    descripcion: "Aretes largos con perlas negras y acabados dorados.",
     imagen: "img/arete2.jpg"
   },
   {
     id: 3,
-    nombre: "Topos Estrella Minimal",
-    categoria: "topos",
+    nombre: "Aretes torbellino colorido",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Topos pequeños en forma de estrella con cierre hipoalergénico.",
+    descripcion: "Aretes medianos con un torbellino de colores en medio, ideal para eventos.",
     imagen: "img/arete3.jpg"
   },
   {
     id: 4,
-    nombre: "Argollas Trenzadas Vintage",
-    categoria: "argollas",
+    nombre: "Aretes Florares dorados",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Diseño trenzado texturizado ideal para combinar con cualquier outfit.",
+    descripcion: "Diseño inspirado en un campo brillante de flores, util para todo estilo",
     imagen: "img/arete4.jpg"
   },
   {
     id: 5,
-    nombre: "Gota de Cristal Boho",
-    categoria: "largos",
+    nombre: "Aretes vitrales",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Aretes colgantes con piedra translúcida y acabado artesanal.",
+    descripcion: "Aretes pequeños con un acabado que recuerda a los clasicos vitrales",
     imagen: "img/arete5.jpg"
   },
   {
     id: 6,
-    nombre: "Topos Corazón Delicado",
-    categoria: "topos",
+    nombre: "Aretes girasol",
+    categoria: "Aretes",
     precio: "$--",
     descripcion: "Pequeños y cómodos, perfectos para un toque sutil y femenino.",
     imagen: "img/arete6.jpg"
   },
   {
     id: 7,
-    nombre: "Argollas Doble Aro",
-    categoria: "argollas",
+    nombre: "Aretes Atardecer",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Doble aro entrelazado con brillo suave y peso ultra liviano.",
+    descripcion: "Un duo hecho para destacar de una manera elegante.",
     imagen: "img/arete7.jpg"
   },
   {
     id: 8,
-    nombre: "Hilos de Luna",
-    categoria: "largos",
+    nombre: "Aretes Medialuna",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Cadenas finas colgantes con dije de media luna en la punta.",
+    descripcion: "Pequeños aretes en forma de media luna.",
     imagen: "img/arete8.jpg"
   },
   {
     id: 9,
-    nombre: "Topos Flor Silvestre",
-    categoria: "topos",
+    nombre: "Aretes Silvestres",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Inspirados en pétalos naturales con centro brillante.",
+    descripcion: "Inspirados en pétalos naturales para recordar buenos momentos.",
     imagen: "img/arete9.jpg"
   },
   {
     id: 10,
-    nombre: "Argollas Perla Colgante",
-    categoria: "argollas",
+    nombre: "Aretes Perla Colgante",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Argolla clásica con una perla desmontable para usar de dos formas.",
+    descripcion: "Aretes clasicos con un lindo acabado dorado",
     imagen: "img/arete10.jpg"
   },
   {
     id: 11,
-    nombre: "Abanico Tejido Artesanal",
-    categoria: "largos",
+    nombre: "Aretes Hamaca",
+    categoria: "Aretes",
     precio: "$--",
-    descripcion: "Tejido a mano en tonos cálidos para eventos y ocasiones especiales.",
+    descripcion: "Lindos y clasicos para ocasiones especiales.",
     imagen: "img/arete11.jpg"
   }
 ];
