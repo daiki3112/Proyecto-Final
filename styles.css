@@ -478,6 +478,12 @@ footer {
   align-items: center;
   gap: 12px;
   margin-bottom: 6px;
+
+}
+
+.header-panel h3 {
+  font-size: 1.35rem;
+  margin-bottom: 0;
 }
 
 .btn-chico {
@@ -487,9 +493,12 @@ footer {
 }
 
 .lista-admin {
+  max-height: 370px;
+  overflow-y: auto;
+  padding-right: 6px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .item-admin {
@@ -501,6 +510,12 @@ footer {
   background-color: #fbf8f3;
   border: 1px solid #eadfce;
   border-radius: 10px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.item-admin:hover {
+  border-color: #c8a27a;
+  background-color: #fffaf3;
 }
 
 .item-admin-info {
