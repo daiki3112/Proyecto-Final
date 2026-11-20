@@ -37,13 +37,28 @@
       </div>
     </section>
 
-    <section id="asistente" class="seccion">
+   <section id="asistente" class="seccion">
       <div class="contenedor">
-        <h2>Asistente de Estilo IA</h2>
-        <p class="subtitulo-seccion">¿No sabes qué aretes elegir? Cuéntanos qué tipo de rostro tienes o para qué ocasión los buscas y te recomendamos el par ideal.</p>
+        <h2> Stylist IA | Anais Bisutería</h2>
+        <p class="subtitulo-seccion">¿Dudas sobre qué aretes te favorecen más o cómo combinarlos? Chatea con nuestra asesora virtual.</p>
         
-        <div class="caja-ia" id="cajaAsistente">
-          <!-- Aquí irá la interfaz del recomendador inteligente -->
+        <div class="chat-contenedor">
+          <div class="chat-mensajes" id="chatMensajes">
+            <div class="mensaje mensaje-ia">
+               ¡Hola! Soy la asesora virtual de Anais Bisutería. ¿Buscas aretes para una ocasión especial o según la forma de tu rostro?
+            </div>
+          </div>
+
+          <div class="chat-sugerencias" id="chatSugerencias">
+            <button type="button" class="chip-sugerencia" data-pregunta="¿Qué aretes me quedan mejor si tengo rostro redondo?"> Rostro redondo</button>
+            <button type="button" class="chip-sugerencia" data-pregunta="Busco algo elegante para una fiesta de noche"> Evento de noche</button>
+            <button type="button" class="chip-sugerencia" data-pregunta="¿Qué materiales usan y cómo los cuido?"> Cuidado y materiales</button>
+          </div>
+
+          <form class="chat-form" id="formChat">
+            <input type="text" id="inputChat" placeholder="Ej: ¿Qué aretes combinan con vestido negro?..." autocomplete="off" required>
+            <button type="submit" class="btn-enviar-chat">Enviar</button>
+          </form>
         </div>
       </div>
     </section>
