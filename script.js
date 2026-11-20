@@ -359,14 +359,12 @@ let datosPedido = {
   nombre: ""
 };
 
-// Evita que caracteres especiales rompan el HTML del chat
 function sanitizarTexto(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
 }
 
-// Convierte precio "$45.000" a número 45000 y viceversa
 function parsearPrecio(precioStr) {
   const limpio = String(precioStr).replace(/[^0-9]/g, '');
   return limpio ? Number(limpio) : 0;
@@ -381,7 +379,6 @@ function obtenerInfoProducto(idProducto) {
   return prod ? `<strong>${prod.nombre}</strong> (${prod.precio})` : "";
 }
 
-// Busca si el usuario mencionó algún arete real de los 11 del catálogo
 function buscarProductoEnTexto(textoLimpio) {
   const palabrasIgnoradas = ['arete', 'aretes', 'de', 'el', 'la', 'los', 'las', 'un', 'una', 'para', 'con', 'quiero', 'cuanto', 'vale', 'precio'];
   return productos.find((prod) => {
@@ -412,16 +409,13 @@ function reiniciarFlujo() {
   };
 }
 
-// Extrae múltiples datos de una sola frase (estilo, mayor/unidad, cantidad, color)
 function extraerIntenciones(texto) {
-  // 1. Detectar producto específico del catálogo
   const prodMencionado = buscarProductoEnTexto(texto);
   if (prodMencionado) {
     datosPedido.productoElegido = prodMencionado;
     datosPedido.gusto = `${prodMencionado.nombre} (${prodMencionado.precio})`;
   }
 
-  // 2. Detectar estilo u ocasión si aún no hay gusto definido
   if (!datosPedido.gusto) {
     if (texto.includes("redondo") || texto.includes("cara") || texto.includes("rostro")) {
       datosPedido.gusto = "Aretes largos estilizados para rostro redondo";
@@ -432,7 +426,6 @@ function extraerIntenciones(texto) {
     }
   }
 
-  // 3. Detectar modalidad (por mayor vs por unidad)
   if (texto.includes("mayor") || texto.includes("mayorista") || texto.includes("docena")) {
     datosPedido.tipo = "por mayor";
   } else if (texto.includes("unidad") || texto.includes("un par") || texto.includes("solo uno") || texto.includes("personal")) {
@@ -440,7 +433,6 @@ function extraerIntenciones(texto) {
     if (!datosPedido.cantidad || datosPedido.cantidad < 1) datosPedido.cantidad = 1;
   }
 
-  // 4. Detectar cantidad numérica (ej: "6 pares", "12", "docena")
   if (texto.includes("docena")) {
     datosPedido.cantidad = 12;
     datosPedido.tipo = "por mayor";
@@ -456,7 +448,6 @@ function extraerIntenciones(texto) {
     }
   }
 
-  // 5. Detectar acabado/color
   if (texto.includes("dorado") || texto.includes("dorada") || texto.includes("oro")) {
     datosPedido.color = "Dorado";
   } else if (texto.includes("plateado") || texto.includes("plateada") || texto.includes("plata")) {
@@ -471,13 +462,12 @@ function generarTicketWhatsApp(nombreCliente) {
   const cantFinal = datosPedido.cantidad || 1;
   const colorFinal = datosPedido.color || "Dorado";
 
-  // Cálculo estimado si eligió un producto concreto
   let textoEstimado = "";
   if (datosPedido.productoElegido) {
     const unitario = parsearPrecio(datosPedido.productoElegido.precio);
     let total = unitario * cantFinal;
     if (modalidadFinal === "por mayor" && cantFinal >= 6) {
-      total = Math.round(total * 0.85); // 15% dcto mayorista
+      total = Math.round(total * 0.85);
       textoEstimado = ` (Estimado con 15% dcto mayorista: ${formatearCOP(total)})`;
     } else {
       textoEstimado = ` (Estimado: ${formatearCOP(total)})`;
@@ -507,7 +497,17 @@ function responderIA(textoOriginal) {
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
-  // Comandos globales que funcionan en CUALQUIER momento sin romper el flujo
+  // 1. Filtro anti-teclazos / mensajes muy cortos sin sentido (ej: "h", "ds", "??")
+  const saludos = ["hola", "holi", "buenas", "buenos dias", "buenas tardes", "buenas noches", "hey", "ola"];
+  if (saludos.includes(texto)) {
+    return "¡Hola! Qué gusto saludarte 💖 Cuéntame, ¿buscas aretes para alguna ocasión especial, por tipo de rostro o quieres ver precios del catálogo?";
+  }
+
+  if (texto.length < 3 || !/[aeiou]/.test(texto) && !/\d/.test(texto)) {
+    return "No alcancé a entenderte bien 😅 Cuéntame qué estilo de aretes buscas (ej: <em>rostro redondo</em>, <em>fiesta de noche</em>, <em>Arete Girasol</em>) o escribe <strong>catálogo</strong> para ver opciones ✨";
+  }
+
+  // 2. Comandos globales
   if (texto === "reiniciar" || texto === "cancelar" || texto === "empezar de nuevo" || texto === "borrar") {
     reiniciarFlujo();
     return "¡Conversación reiniciada! ✨ Cuéntame qué estilo de aretes buscas hoy o pregúntame por cualquier diseño del catálogo.";
@@ -519,11 +519,11 @@ function responderIA(textoOriginal) {
   }
 
   if (texto.includes("catalogo") || texto.includes("cuales tienen") || texto.includes("modelos") || texto.includes("precios")) {
-    const listaRapida = productos.slice(0, 5).map(p => `• ${p.nombre}: <strong>${p.precio}</strong>`).join("<br>");
+    const listaRapida = productos.slice(0, 6).map(p => `• ${p.nombre}: <strong>${p.precio}</strong>`).join("<br>");
     return `Tenemos <strong>${productos.length} diseños artesanales</strong> disponibles. Algunos favoritos:<br>${listaRapida}<br>Puedes preguntarme por cualquiera por su nombre o decirme qué ocasión tienes 💖`;
   }
 
-  // Si estamos en el paso final esperando únicamente el nombre del cliente
+  // 3. Paso final esperando nombre
   if (paso === 4) {
     const nombreLimpio = textoOriginal.replace(/^(me llamo|soy|mi nombre es)\s+/i, "").trim();
     if (nombreLimpio.length < 2) {
@@ -532,15 +532,14 @@ function responderIA(textoOriginal) {
     return generarTicketWhatsApp(nombreLimpio);
   }
 
-  // Analizar todo lo que dijo el usuario en esta frase
+  // 4. Extraer intenciones de la frase
   extraerIntenciones(texto);
 
-  // Si en paso 0 escribió algo libre (ej. "quiero unos aretes bonitos") sin palabra clave
   if (paso === 0 && !datosPedido.gusto) {
     datosPedido.gusto = sanitizarTexto(textoOriginal);
   }
 
-  // Máquina de estados inteligente: solo pregunta lo que REALMENTE falta
+  // 5. Máquina de estados inteligente
   if (!datosPedido.tipo) {
     paso = 1;
     if (datosPedido.productoElegido) {
@@ -552,7 +551,7 @@ function responderIA(textoOriginal) {
     if (texto.includes("noche") || texto.includes("fiesta") || texto.includes("elegante")) {
       return `Para evento de noche brillan increíble los ${obtenerInfoProducto(7)} y los ${obtenerInfoProducto(11)} ✨ ¿Los deseas <strong>por unidad</strong> o <strong>al por mayor</strong>?`;
     }
-    return `¡Me encanta! Anotado: <em>${datosPedido.gusto}</em> 💖 ¿Tu pedido sería <strong>por unidad</strong> o <strong>al por mayor</strong> (con descuento desde 6 pares)?`;
+    return `¡Me encanta! Anotado: <em>${datosPedido.gusto}</em> 💖 ¿Tu pedido sería <strong>por unidad</strong> o <strong>al por mayor</strong> (con 15% de descuento desde 6 pares)?`;
   }
 
   if (datosPedido.tipo === "por mayor" && (!datosPedido.cantidad || datosPedido.cantidad < 2)) {
@@ -565,7 +564,6 @@ function responderIA(textoOriginal) {
     return `¡Perfecto (${datosPedido.tipo}, ${datosPedido.cantidad} ${datosPedido.cantidad === 1 ? 'par' : 'pares'})! ✨ ¿Los prefieres en acabado <strong>dorado</strong> o <strong>plateado</strong>?`;
   }
 
-  // Si ya tiene gusto, tipo, cantidad y color (incluso si lo dijo todo en el primer mensaje)
   paso = 4;
   return `¡Ya tengo casi todo listo (${datosPedido.gusto}, ${datosPedido.tipo}, acabado ${datosPedido.color})! ✨ ¿Me dices <strong>tu nombre</strong> para generarte el ticket directo a WhatsApp?`;
 }
@@ -591,7 +589,7 @@ form.addEventListener('submit', (e) => {
 
 document.querySelectorAll('.chip-sugerencia').forEach(boton => {
   boton.addEventListener('click', () => {
-    reiniciarFlujo(); // Al tocar un chip de sugerencia, inicia consulta limpia
+    reiniciarFlujo();
     input.value = boton.getAttribute('data-pregunta');
     form.dispatchEvent(new Event('submit'));
   });
