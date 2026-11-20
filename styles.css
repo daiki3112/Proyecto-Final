@@ -401,3 +401,71 @@ footer {
   padding: 28px 0;
   font-size: 0.9rem;
 }
+
+/* Adaptacion Responsive (Tablets y Celulares) */
+@media (max-width: 768px) {
+  .btn-menu {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 72px;
+    left: 0;
+    width: 100%;
+    background-color: #fffdf9;
+    padding: 24px 20px;
+    gap: 18px;
+    border-bottom: 1px solid #eadfce;
+    box-shadow: 0 10px 20px rgba(45, 36, 30, 0.08);
+  }
+
+  .nav-links.activo {
+    display: flex;
+  }
+
+  .hero {
+    padding: 65px 0;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 0.98rem;
+  }
+
+  .hero-botones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-principal,
+  .btn-secundario {
+    text-align: center;
+  }
+
+  .seccion {
+    padding: 55px 0;
+  }
+
+  .seccion h2 {
+    font-size: 1.7rem;
+  }
+
+  .chat-contenedor,
+  .contenedor-contacto {
+    padding: 20px 16px;
+  }
+
+  .chat-form {
+    flex-direction: column;
+  }
+
+  .btn-enviar-chat {
+    padding: 12px;
+  }
+}

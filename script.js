@@ -162,3 +162,16 @@ formContacto.addEventListener('submit', (e) => {
     estadoForm.textContent = '';
   }, 4000);
 });
+// Menu hamburguesa en version movil
+const btnMenu = document.getElementById('btnMenu');
+const navLinks = document.getElementById('navLinks');
+
+btnMenu.addEventListener('click', () => {
+  navLinks.classList.toggle('activo');
+});
+
+navLinks.querySelectorAll('a, button').forEach((item) => {
+  item.addEventListener('click', () => {
+    navLinks.classList.remove('activo');
+  });
+});
