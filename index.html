@@ -96,7 +96,43 @@
     <p>© 2026 Anais Bisutería - Todos los derechos reservados</p>
   </footer>
 
+<!-- Ventana Modal para Login y Panel Admin -->
+  <div class="modal-fondo" id="modalAdmin">
+    <div class="modal-caja">
+      <button class="btn-cerrar-modal" id="btnCerrarModal" aria-label="Cerrar">&times;</button>
 
+      <!-- Vista 1: Formulario de Login -->
+      <div id="vistaLogin">
+        <h3>Acceso Administrador</h3>
+        <p class="subtitulo-modal">Ingresa tus credenciales para gestionar precios y catálogo.</p>
+        <form id="formLogin" class="form-contacto">
+          <div class="grupo-input">
+            <label for="usuarioAdmin">Usuario</label>
+            <input type="text" id="usuarioAdmin" placeholder="admin" required>
+          </div>
+          <div class="grupo-input">
+            <label for="claveAdmin">Contraseña</label>
+            <input type="password" id="claveAdmin" placeholder="••••••" required>
+          </div>
+          <button type="submit" class="btn-principal btn-completo">Ingresar al Panel</button>
+          <p class="error-login" id="errorLogin"></p>
+        </form>
+      </div>
+
+      <!-- Vista 2: Panel de Gestión (oculta hasta iniciar sesión) -->
+      <div id="vistaPanel" class="oculto">
+        <div class="header-panel">
+          <h3>Panel de Gestión | Anais Bisutería</h3>
+          <button type="button" class="btn-secundario btn-chico" id="btnCerrarSesion">Cerrar sesión</button>
+        </div>
+        <p class="subtitulo-modal">Actualiza los precios de tus aretes. Los cambios se guardan en el navegador.</p>
+        
+        <div class="lista-admin" id="listaAdminProductos">
+          <!-- Aquí cargaremos los 11 aretes para editarles el precio -->
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
