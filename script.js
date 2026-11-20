@@ -344,3 +344,117 @@ listaAdminProductos.addEventListener('click', (e) => {
     }
   }
 });
+// Chatbot conversacional por pasos (Stylist IA)
+const mensajesDiv = document.getElementById('chatMensajes');
+const form = document.getElementById('formChat');
+const input = document.getElementById('inputChat');
+
+let paso = 0;
+let datosPedido = {
+  gusto: "",
+  tipo: "", // unidad o mayor
+  cantidad: "",
+  color: "",
+};
+
+function mostrarMensaje(texto, esIA) {
+  let clase = esIA ? "mensaje mensaje-ia" : "mensaje mensaje-usuario";
+  mensajesDiv.innerHTML += `<div class="${clase}">${texto}</div>`;
+  mensajesDiv.scrollTop = mensajesDiv.scrollHeight;
+}
+
+function responderIA(textoUsuario) {
+  let texto = textoUsuario.toLowerCase();
+
+  // Paso 0: Qué busca
+  if (paso === 0) {
+    if (texto.includes("redondo")) {
+      datosPedido.gusto = "Aretes para rostro redondo";
+      paso = 1;
+      return "¡Perfecto! Para rostro redondo te recomiendo aretes largos y delgados, te hacen ver la cara más alargada 💖 ¿Tu pedido sería por unidad o por mayor?";
+    }
+    if (texto.includes("noche") || texto.includes("fiesta") || texto.includes("elegante")) {
+      datosPedido.gusto = "Aretes elegantes para fiesta de noche";
+      paso = 1;
+      return "Para fiesta de noche te recomiendo aretes largos con brillo, dorados o plateados ✨ ¿Tu pedido sería por unidad o por mayor?";
+    }
+    if (texto.includes("cuidado") || texto.includes("material")) {
+      return "Nuestros aretes son en acero y bisutería fina. No los mojes con perfume y guárdalos en su bolsita. ¿Quieres hacer un pedido? ¿Sería por unidad o por mayor?";
+    }
+    datosPedido.gusto = textoUsuario;
+    paso = 1;
+    return "¡Me encanta! Cuéntame, ¿tu pedido sería por unidad o por mayor?";
+  }
+
+  // Paso 1: Unidad o mayor
+  if (paso === 1) {
+    if (texto.includes("mayor")) {
+      datosPedido.tipo = "por mayor";
+      paso = 2;
+      return "¡Genial! Por mayor te hacemos precio especial desde 6 pares 💖 ¿Cuántos pares quieres?";
+    }
+    if (texto.includes("unidad") || texto.includes("un par") || texto.includes("uno")) {
+      datosPedido.tipo = "por unidad";
+      datosPedido.cantidad = "1 par";
+      paso = 3;
+      return "¡Perfecto por unidad! Ahora dime, ¿los quieres dorados o plateados?";
+    }
+    return "¿Sería por unidad o por mayor? Por mayor te sale más económico 💖";
+  }
+
+  // Paso 2: Cantidad si es por mayor
+  if (paso === 2) {
+    datosPedido.cantidad = textoUsuario;
+    paso = 3;
+    return `¡Listo! ${textoUsuario} pares por mayor, te va a salir súper bien. ¿Los quieres dorados o plateados?`;
+  }
+
+  // Paso 3: Color dorado o plateado
+  if (paso === 3) {
+    if (texto.includes("dorado") || texto.includes("oro")) {
+      datosPedido.color = "Dorado";
+      paso = 4;
+      return "¡Uff, los dorados se ven hermosos! ✨ ¿Me dices tu nombre para mandarte a WhatsApp y darte el precio?";
+    }
+    if (texto.includes("plateado") || texto.includes("plata") || texto.includes("plateada")) {
+      datosPedido.color = "Plateado";
+      paso = 4;
+      return "¡Los plateados son súper elegantes! ✨ ¿Me dices tu nombre para mandarte a WhatsApp y darte el precio?";
+    }
+    return "¿Los quieres dorados o plateados? Los dos se ven divinos 💖";
+  }
+
+  // Paso 4: Nombre y mandar a WhatsApp
+  if (paso === 4) {
+    let nombre = textoUsuario;
+    let mensajeWhats = `Hola Anais 💖 Soy ${nombre}, vengo de tu página web. Quiero hacer un pedido ${datosPedido.tipo}. Me gustó: ${datosPedido.gusto}. Cantidad: ${datosPedido.cantidad}. Color: ${datosPedido.color}. ¿Me ayudas con el precio y disponibilidad?`;
+    let link = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensajeWhats)}`;
+
+    mostrarMensaje(`¡Listo ${nombre}! Te preparé tu pedido en ${datosPedido.color}, dale clic para hablarme por WhatsApp 💬`, true);
+    mensajesDiv.innerHTML += `<a href="${link}" target="_blank" style="display:block; text-align:center; margin:10px; padding:10px; background:#25D366; color:white; text-decoration:none; border-radius:20px;">Ir a WhatsApp y hacer mi pedido</a>`;
+    paso = 0;
+    datosPedido = { gusto: "", tipo: "", cantidad: "", color: "" };
+    return "Si quieres hacer otro pedido, solo escríbeme de nuevo 💖";
+  }
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  let texto = input.value.trim();
+  if (texto == "") return;
+
+  mostrarMensaje(texto, false);
+  input.value = "";
+
+  setTimeout(() => {
+    let respuesta = responderIA(texto);
+    mostrarMensaje(respuesta, true);
+  }, 500);
+});
+
+document.querySelectorAll('.chip-sugerencia').forEach(boton => {
+  boton.addEventListener('click', () => {
+    input.value = boton.getAttribute('data-pregunta');
+    form.dispatchEvent(new Event('submit'));
+  });
+});
