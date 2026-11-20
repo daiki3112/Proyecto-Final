@@ -115,8 +115,15 @@ function mostrarProductos(lista) {
   });
 }
 
+// Cargar productos desde localStorage o usar los iniciales
+let productos = JSON.parse(localStorage.getItem('anais_productos')) || productosIniciales;
+
+function guardarProductosStorage() {
+  localStorage.setItem('anais_productos', JSON.stringify(productos));
+}
+
 // Cargar todos los productos al abrir la tienda
-mostrarProductos(productosIniciales);
+mostrarProductos(productos);
 
 // Numero de WhatsApp de la tienda (cambia este numero por el tuyo)
 const numeroWhatsApp = '573212289682';
@@ -129,7 +136,7 @@ const estadoForm = document.getElementById('estadoForm');
 gridProductos.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-pedir')) {
     const idSeleccionado = Number(e.target.dataset.id);
-    const areteElegido = productosIniciales.find(item => item.id === idSeleccionado);
+    const areteElegido = productos.find(item => item.id === idSeleccionado);
 
     if (areteElegido) {
       inputProducto.value = areteElegido.nombre;
@@ -174,4 +181,58 @@ navLinks.querySelectorAll('a, button').forEach((item) => {
   item.addEventListener('click', () => {
     navLinks.classList.remove('activo');
   });
+});
+// Sistema de Login y Modal Admin
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'anais2026';
+
+const btnAdminNav = document.getElementById('btnAdminNav');
+const modalAdmin = document.getElementById('modalAdmin');
+const btnCerrarModal = document.getElementById('btnCerrarModal');
+const vistaLogin = document.getElementById('vistaLogin');
+const vistaPanel = document.getElementById('vistaPanel');
+const formLogin = document.getElementById('formLogin');
+const errorLogin = document.getElementById('errorLogin');
+const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+
+function verificarSesion() {
+  const sesionActiva = localStorage.getItem('anais_admin_sesion') === 'true';
+  if (sesionActiva) {
+    vistaLogin.classList.add('oculto');
+    vistaPanel.classList.remove('oculto');
+    renderizarPanelAdmin();
+  } else {
+    vistaLogin.classList.remove('oculto');
+    vistaPanel.classList.add('oculto');
+  }
+}
+
+btnAdminNav.addEventListener('click', () => {
+  verificarSesion();
+  modalAdmin.classList.add('abierto');
+});
+
+btnCerrarModal.addEventListener('click', () => {
+  modalAdmin.classList.remove('abierto');
+  errorLogin.textContent = '';
+});
+
+formLogin.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const user = document.getElementById('usuarioAdmin').value.trim();
+  const pass = document.getElementById('claveAdmin').value.trim();
+
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    localStorage.setItem('anais_admin_sesion', 'true');
+    errorLogin.textContent = '';
+    formLogin.reset();
+    verificarSesion();
+  } else {
+    errorLogin.textContent = 'Usuario o contraseña incorrectos.';
+  }
+});
+
+btnCerrarSesion.addEventListener('click', () => {
+  localStorage.removeItem('anais_admin_sesion');
+  verificarSesion();
 });
