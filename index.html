@@ -25,6 +25,21 @@
     </div>
   </header>
 
+<main>
+    <section id="inicio" class="hero">
+      <div class="contenedor hero-contenido">
+        <span class="etiqueta">Hecho a mano con amor</span>
+        <h1>Aretes únicos que iluminan tu estilo</h1>
+        <p>Descubre piezas artesanales diseñadas para resaltar tu esencia en cada momento especial.</p>
+        <div class="hero-botones">
+          <a href="#catalogo" class="btn-principal">Ver Colección</a>
+          <a href="#asistente" class="btn-secundario">Consultar Stylist IA</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalogo" class="seccion">
+
   <main>
  <section id="catalogo" class="seccion">
       <div class="contenedor">
@@ -89,6 +104,7 @@
             <p class="estado-form" id="estadoForm"></p>
           </form>
         </div>
+      </div>
     </section>
   </main>
 
@@ -101,21 +117,45 @@
     <div class="modal-caja">
       <button class="btn-cerrar-modal" id="btnCerrarModal" aria-label="Cerrar">&times;</button>
 
-      <!-- Vista 1: Formulario de Login -->
+      <!-- Vista 1: Login y Registro de Cuentas -->
       <div id="vistaLogin">
-        <h3>Acceso Administrador</h3>
-        <p class="subtitulo-modal">Ingresa tus credenciales para gestionar precios y catálogo.</p>
+        <div class="tabs-auth">
+          <button type="button" class="tab-auth activa" id="tabLogin">Iniciar Sesión</button>
+          <button type="button" class="tab-auth" id="tabRegistro">Crear Cuenta</button>
+        </div>
+
+        <!-- Formulario Iniciar Sesión -->
         <form id="formLogin" class="form-contacto">
+          <p class="subtitulo-modal">Ingresa con tu cuenta para administrar la tienda.</p>
           <div class="grupo-input">
-            <label for="usuarioAdmin">Usuario</label>
-            <input type="text" id="usuarioAdmin" placeholder="admin" required>
+            <label for="usuarioAdmin">Usuario o Correo</label>
+            <input type="text" id="usuarioAdmin" placeholder="Ej: admin" required>
           </div>
           <div class="grupo-input">
             <label for="claveAdmin">Contraseña</label>
             <input type="password" id="claveAdmin" placeholder="••••••" required>
           </div>
-          <button type="submit" class="btn-principal btn-completo">Ingresar al Panel</button>
+          <button type="submit" class="btn-principal btn-completo">Entrar a mi Cuenta</button>
           <p class="error-login" id="errorLogin"></p>
+        </form>
+
+        <!-- Formulario Crear Cuenta Nueva -->
+        <form id="formRegistro" class="form-contacto oculto">
+          <p class="subtitulo-modal">Crea una cuenta nueva de administrador o vendedor.</p>
+          <div class="grupo-input">
+            <label for="nuevoNombre">Tu Nombre</label>
+            <input type="text" id="nuevoNombre" placeholder="Ej: Anais" required>
+          </div>
+          <div class="grupo-input">
+            <label for="nuevoUsuario">Usuario</label>
+            <input type="text" id="nuevoUsuario" placeholder="Ej: anais_admin" required>
+          </div>
+          <div class="grupo-input">
+            <label for="nuevaClave">Contraseña</label>
+            <input type="password" id="nuevaClave" placeholder="Mínimo 4 caracteres" minlength="4" required>
+          </div>
+          <button type="submit" class="btn-principal btn-completo">Registrarme y Entrar</button>
+          <p class="error-login" id="msgRegistro"></p>
         </form>
       </div>
 
