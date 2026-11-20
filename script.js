@@ -186,7 +186,7 @@ navLinks.querySelectorAll('a, button').forEach((item) => {
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'anais2026';
 
-const btnAdminNav = document.getElementById('btnAdminNav');
+const btnAdminNav = document.getElementById('btnAbrirAdmin');
 const modalAdmin = document.getElementById('modalAdmin');
 const btnCerrarModal = document.getElementById('btnCerrarModal');
 const vistaLogin = document.getElementById('vistaLogin');
