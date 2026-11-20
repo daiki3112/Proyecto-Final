@@ -231,7 +231,7 @@ function verificarSesion() {
     vistaPanel.classList.remove('oculto');
     renderizarPanelAdmin();
   } else {
-    btnAdminNav.textContent = 'Admin';
+    btnAdminNav.textContent = 'Mi Cuenta';
     vistaLogin.classList.remove('oculto');
     vistaPanel.classList.add('oculto');
   }

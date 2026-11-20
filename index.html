@@ -20,7 +20,7 @@
         <a href="#catalogo">Catálogo</a>
         <a href="#asistente">Asistente IA</a>
         <a href="#contacto">Contacto</a>
-        <button class="btn-admin-nav" id="btnAbrirAdmin">Admin</button>
+<button class="btn-admin-nav" id="btnAbrirAdmin">Mi Cuenta</button>
       </nav>
     </div>
   </header>
@@ -128,8 +128,8 @@
         <form id="formLogin" class="form-contacto">
           <p class="subtitulo-modal">Ingresa con tu cuenta para administrar la tienda.</p>
           <div class="grupo-input">
-            <label for="usuarioAdmin">Usuario o Correo</label>
-            <input type="text" id="usuarioAdmin" placeholder="Ej: admin" required>
+            <label for="usuarioAdmin">Tu usuario</label>
+            <input type="text" id="usuarioAdmin" placeholder="Ej: anais_admin" required>
           </div>
           <div class="grupo-input">
             <label for="claveAdmin">Contraseña</label>
@@ -141,13 +141,13 @@
 
         <!-- Formulario Crear Cuenta Nueva -->
         <form id="formRegistro" class="form-contacto oculto">
-          <p class="subtitulo-modal">Crea una cuenta nueva de administrador o vendedor.</p>
+          <p class="subtitulo-modal">Crea tu cuenta en Anais Bisutería.</p>
           <div class="grupo-input">
             <label for="nuevoNombre">Tu Nombre</label>
             <input type="text" id="nuevoNombre" placeholder="Ej: Anais" required>
           </div>
           <div class="grupo-input">
-            <label for="nuevoUsuario">Usuario</label>
+            <label for="nuevoUsuario">Tu usuario (con este iniciarás sesión)</label>
             <input type="text" id="nuevoUsuario" placeholder="Ej: anais_admin" required>
           </div>
           <div class="grupo-input">
@@ -157,7 +157,6 @@
           <button type="submit" class="btn-principal btn-completo">Registrarme y Entrar</button>
           <p class="error-login" id="msgRegistro"></p>
         </form>
-      </div>
 
       <!-- Vista 2: Panel de Gestión (oculta hasta iniciar sesión) -->
       <div id="vistaPanel" class="oculto">
