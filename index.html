@@ -11,7 +11,7 @@
 </head>
 <body>
 
- <header class="navbar">
+  <header class="navbar">
     <div class="contenedor nav-contenido">
       <a href="#inicio" class="logo">Anais Bisutería</a>
       <button class="btn-menu" id="btnMenu" aria-label="Abrir menu">☰</button>
@@ -20,12 +20,12 @@
         <a href="#catalogo">Catálogo</a>
         <a href="#asistente">Asistente IA</a>
         <a href="#contacto">Contacto</a>
-<button class="btn-admin-nav" id="btnAbrirAdmin">Mi Cuenta</button>
+        <button class="btn-admin-nav" id="btnAbrirAdmin">Mi Cuenta</button>
       </nav>
     </div>
   </header>
 
-<main>
+  <main>
     <section id="inicio" class="hero">
       <div class="contenedor hero-contenido">
         <span class="etiqueta">Hecho a mano con amor</span>
@@ -39,9 +39,6 @@
     </section>
 
     <section id="catalogo" class="seccion">
-
-  <main>
- <section id="catalogo" class="seccion">
       <div class="contenedor">
         <h2>Nuestra Colección</h2>
         <p class="subtitulo-seccion">Explora nuevos lindos diseños de bisuteria casera, lista para tus mejores ocasiones.</p>
@@ -52,9 +49,9 @@
       </div>
     </section>
 
-   <section id="asistente" class="seccion">
+    <section id="asistente" class="seccion">
       <div class="contenedor">
-        <h2> Stylist IA | Anais Bisutería</h2>
+        <h2>Stylist IA | Anais Bisutería</h2>
         <p class="subtitulo-seccion">¿Dudas sobre qué aretes te favorecen más o cómo combinarlos? Chatea con nuestra asesora virtual.</p>
         
         <div class="chat-contenedor">
@@ -65,9 +62,9 @@
           </div>
 
           <div class="chat-sugerencias" id="chatSugerencias">
-            <button type="button" class="chip-sugerencia" data-pregunta="¿Qué aretes me quedan mejor si tengo rostro redondo?"> Rostro redondo</button>
-            <button type="button" class="chip-sugerencia" data-pregunta="Busco algo elegante para una fiesta de noche"> Evento de noche</button>
-            <button type="button" class="chip-sugerencia" data-pregunta="¿Qué materiales usan y cómo los cuido?"> Cuidado y materiales</button>
+            <button type="button" class="chip-sugerencia" data-pregunta="¿Qué aretes me quedan mejor si tengo rostro redondo?">Rostro redondo</button>
+            <button type="button" class="chip-sugerencia" data-pregunta="Busco algo elegante para una fiesta de noche">Evento de noche</button>
+            <button type="button" class="chip-sugerencia" data-pregunta="¿Qué materiales usan y cómo los cuido?">Cuidado y materiales</button>
           </div>
 
           <form class="chat-form" id="formChat">
@@ -112,7 +109,7 @@
     <p>© 2026 Anais Bisutería - Todos los derechos reservados</p>
   </footer>
 
-<!-- Ventana Modal para Login y Panel Admin -->
+  <!-- Ventana Modal para Login y Panel Admin -->
   <div class="modal-fondo" id="modalAdmin">
     <div class="modal-caja">
       <button class="btn-cerrar-modal" id="btnCerrarModal" aria-label="Cerrar">&times;</button>
@@ -157,6 +154,7 @@
           <button type="submit" class="btn-principal btn-completo">Registrarme y Entrar</button>
           <p class="error-login" id="msgRegistro"></p>
         </form>
+      </div>
 
       <!-- Vista 2: Panel de Gestión (oculta hasta iniciar sesión) -->
       <div id="vistaPanel" class="oculto">
@@ -174,8 +172,5 @@
   </div>
 
   <script src="script.js"></script>
-  <script src="chatbot.js"></script>
-</body>
-</html>
 </body>
 </html>
