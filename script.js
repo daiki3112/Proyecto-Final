@@ -182,30 +182,62 @@ navLinks.querySelectorAll('a, button').forEach((item) => {
     navLinks.classList.remove('activo');
   });
 });
-// Sistema de Login y Modal Admin
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'anais2026';
+// Sistema de Cuentas (Login + Registro) y Panel Admin
+const cuentasDefault = [
+  { nombre: 'Administrador', usuario: 'admin', clave: 'anais2026' }
+];
+
+let cuentasRegistradas = JSON.parse(localStorage.getItem('anais_cuentas')) || cuentasDefault;
 
 const btnAdminNav = document.getElementById('btnAbrirAdmin');
 const modalAdmin = document.getElementById('modalAdmin');
 const btnCerrarModal = document.getElementById('btnCerrarModal');
 const vistaLogin = document.getElementById('vistaLogin');
 const vistaPanel = document.getElementById('vistaPanel');
-const formLogin = document.getElementById('formLogin');
-const errorLogin = document.getElementById('errorLogin');
-const btnCerrarSesion = document.getElementById('btnCerrarSesion');
 
+const tabLogin = document.getElementById('tabLogin');
+const tabRegistro = document.getElementById('tabRegistro');
+const formLogin = document.getElementById('formLogin');
+const formRegistro = document.getElementById('formRegistro');
+const errorLogin = document.getElementById('errorLogin');
+const msgRegistro = document.getElementById('msgRegistro');
+const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+const listaAdminProductos = document.getElementById('listaAdminProductos');
+
+// Cambiar entre pestaña Iniciar Sesión y Crear Cuenta
+tabLogin.addEventListener('click', () => {
+  tabLogin.classList.add('activa');
+  tabRegistro.classList.remove('activa');
+  formLogin.classList.remove('oculto');
+  formRegistro.classList.add('oculto');
+  errorLogin.textContent = '';
+});
+
+tabRegistro.addEventListener('click', () => {
+  tabRegistro.classList.add('activa');
+  tabLogin.classList.remove('activa');
+  formRegistro.classList.remove('oculto');
+  formLogin.classList.add('oculto');
+  msgRegistro.textContent = '';
+});
+
+// Verificar sesión activa y actualizar botón de la barra
 function verificarSesion() {
-  const sesionActiva = localStorage.getItem('anais_admin_sesion') === 'true';
-  if (sesionActiva) {
+  const usuarioActivo = JSON.parse(localStorage.getItem('anais_usuario_activo'));
+
+  if (usuarioActivo) {
+    btnAdminNav.textContent = `Hola, ${usuarioActivo.nombre}`;
     vistaLogin.classList.add('oculto');
     vistaPanel.classList.remove('oculto');
     renderizarPanelAdmin();
   } else {
+    btnAdminNav.textContent = 'Admin';
     vistaLogin.classList.remove('oculto');
     vistaPanel.classList.add('oculto');
   }
 }
+
+verificarSesion();
 
 btnAdminNav.addEventListener('click', () => {
   verificarSesion();
@@ -215,15 +247,21 @@ btnAdminNav.addEventListener('click', () => {
 btnCerrarModal.addEventListener('click', () => {
   modalAdmin.classList.remove('abierto');
   errorLogin.textContent = '';
+  msgRegistro.textContent = '';
 });
 
+// Iniciar sesión con cuenta existente
 formLogin.addEventListener('submit', (e) => {
   e.preventDefault();
   const user = document.getElementById('usuarioAdmin').value.trim();
   const pass = document.getElementById('claveAdmin').value.trim();
 
-  if (user === ADMIN_USER && pass === ADMIN_PASS) {
-    localStorage.setItem('anais_admin_sesion', 'true');
+  const cuentaEncontrada = cuentasRegistradas.find(
+    (c) => c.usuario.toLowerCase() === user.toLowerCase() && c.clave === pass
+  );
+
+  if (cuentaEncontrada) {
+    localStorage.setItem('anais_usuario_activo', JSON.stringify(cuentaEncontrada));
     errorLogin.textContent = '';
     formLogin.reset();
     verificarSesion();
@@ -232,7 +270,77 @@ formLogin.addEventListener('submit', (e) => {
   }
 });
 
-btnCerrarSesion.addEventListener('click', () => {
-  localStorage.removeItem('anais_admin_sesion');
+// Registrar cuenta nueva e iniciar sesión automáticamente
+formRegistro.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById('nuevoNombre').value.trim();
+  const usuario = document.getElementById('nuevoUsuario').value.trim();
+  const clave = document.getElementById('nuevaClave').value.trim();
+
+  const yaExiste = cuentasRegistradas.some(
+    (c) => c.usuario.toLowerCase() === usuario.toLowerCase()
+  );
+
+  if (yaExiste) {
+    msgRegistro.textContent = 'Ese nombre de usuario ya está en uso.';
+    return;
+  }
+
+  const nuevaCuenta = { nombre, usuario, clave };
+  cuentasRegistradas.push(nuevaCuenta);
+  localStorage.setItem('anais_cuentas', JSON.stringify(cuentasRegistradas));
+  localStorage.setItem('anais_usuario_activo', JSON.stringify(nuevaCuenta));
+
+  formRegistro.reset();
   verificarSesion();
+});
+
+// Cerrar sesión
+btnCerrarSesion.addEventListener('click', () => {
+  localStorage.removeItem('anais_usuario_activo');
+  verificarSesion();
+});
+
+// Renderizar y guardar precios en el Panel Admin
+function renderizarPanelAdmin() {
+  listaAdminProductos.innerHTML = '';
+
+  productos.forEach((prod) => {
+    const fila = document.createElement('div');
+    fila.classList.add('item-admin');
+
+    fila.innerHTML = `
+      <div class="item-admin-info">
+        <strong>${prod.nombre}</strong>
+      </div>
+      <div class="item-admin-controles">
+        <input type="text" class="input-precio-admin" id="precio-${prod.id}" value="${prod.precio}">
+        <button type="button" class="btn-guardar-precio" data-id="${prod.id}">Guardar</button>
+      </div>
+    `;
+
+    listaAdminProductos.appendChild(fila);
+  });
+}
+
+listaAdminProductos.addEventListener('click', (e) => {
+  if (e.target.classList.contains('btn-guardar-precio')) {
+    const id = Number(e.target.dataset.id);
+    const inputPrecio = document.getElementById(`precio-${id}`);
+    const nuevoPrecio = inputPrecio.value.trim();
+
+    if (nuevoPrecio !== '') {
+      const producto = productos.find((p) => p.id === id);
+      if (producto) {
+        producto.precio = nuevoPrecio;
+        guardarProductosStorage();
+        mostrarProductos(productos);
+
+        e.target.textContent = '¡Listo!';
+        setTimeout(() => {
+          e.target.textContent = 'Guardar';
+        }, 1500);
+      }
+    }
+  }
 });

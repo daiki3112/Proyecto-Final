@@ -610,3 +610,30 @@ footer {
     padding: 12px;
   }
 }
+.tabs-auth {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #eadfce;
+  padding-bottom: 10px;
+}
+
+.tab-auth {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6e5f53;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.tab-auth.activa {
+  background-color: #f6ece1;
+  color: #a6713e;
+  font-weight: 700;
+}
