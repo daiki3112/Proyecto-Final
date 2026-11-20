@@ -3,7 +3,7 @@ const productosIniciales = [
     id: 1,
     nombre: "Arete Flor de oro",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$45.000",
     descripcion: "Arete mediano, Con detalles en azul marino, ideales para uso diario.",
     imagen: "img/arete1.jpg"
   },
@@ -11,7 +11,7 @@ const productosIniciales = [
     id: 2,
     nombre: "Arete de perla negra",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$40.000",
     descripcion: "Aretes largos con perlas negras y acabados dorados.",
     imagen: "img/arete2.jpg"
   },
@@ -19,7 +19,7 @@ const productosIniciales = [
     id: 3,
     nombre: "Aretes torbellino colorido",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$35.000",
     descripcion: "Aretes medianos con un torbellino de colores en medio, ideal para eventos.",
     imagen: "img/arete3.jpg"
   },
@@ -27,7 +27,7 @@ const productosIniciales = [
     id: 4,
     nombre: "Aretes Florares dorados",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$30.000",
     descripcion: "Diseño inspirado en un campo brillante de flores, util para todo estilo",
     imagen: "img/arete4.jpg"
   },
@@ -35,7 +35,7 @@ const productosIniciales = [
     id: 5,
     nombre: "Aretes vitrales",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$35.000",
     descripcion: "Aretes pequeños con un acabado que recuerda a los clasicos vitrales",
     imagen: "img/arete5.jpg"
   },
@@ -43,7 +43,7 @@ const productosIniciales = [
     id: 6,
     nombre: "Aretes girasol",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$45.000",
     descripcion: "Pequeños y cómodos, perfectos para un toque sutil y femenino.",
     imagen: "img/arete6.jpg"
   },
@@ -51,7 +51,7 @@ const productosIniciales = [
     id: 7,
     nombre: "Aretes Atardecer",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$50.000",
     descripcion: "Un duo hecho para destacar de una manera elegante.",
     imagen: "img/arete7.jpg"
   },
@@ -59,7 +59,7 @@ const productosIniciales = [
     id: 8,
     nombre: "Aretes Medialuna",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$20.000",
     descripcion: "Pequeños aretes en forma de media luna.",
     imagen: "img/arete8.jpg"
   },
@@ -67,7 +67,7 @@ const productosIniciales = [
     id: 9,
     nombre: "Aretes Silvestres",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$25.000",
     descripcion: "Inspirados en pétalos naturales para recordar buenos momentos.",
     imagen: "img/arete9.jpg"
   },
@@ -75,7 +75,7 @@ const productosIniciales = [
     id: 10,
     nombre: "Aretes Perla Colgante",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$55.000",
     descripcion: "Aretes clasicos con un lindo acabado dorado",
     imagen: "img/arete10.jpg"
   },
@@ -83,7 +83,7 @@ const productosIniciales = [
     id: 11,
     nombre: "Aretes Hamaca",
     categoria: "Aretes",
-    precio: "$--",
+    precio: "$40.000",
     descripcion: "Lindos y clasicos para ocasiones especiales.",
     imagen: "img/arete11.jpg"
   }
