@@ -117,3 +117,48 @@ function mostrarProductos(lista) {
 
 // Cargar todos los productos al abrir la tienda
 mostrarProductos(productosIniciales);
+
+// Numero de WhatsApp de la tienda (cambia este numero por el tuyo)
+const numeroWhatsApp = '573212289682';
+
+const inputProducto = document.getElementById('productoInteres');
+const formContacto = document.getElementById('formContacto');
+const estadoForm = document.getElementById('estadoForm');
+
+// Autocompletar el formulario al dar clic en "Lo quiero"
+gridProductos.addEventListener('click', (e) => {
+  if (e.target.classList.contains('btn-pedir')) {
+    const idSeleccionado = Number(e.target.dataset.id);
+    const areteElegido = productosIniciales.find(item => item.id === idSeleccionado);
+
+    if (areteElegido) {
+      inputProducto.value = areteElegido.nombre;
+      document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+});
+
+// Enviar pedido por la API de WhatsApp (wa.me)
+formContacto.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const nombre = document.getElementById('nombreCliente').value.trim();
+  const producto = inputProducto.value.trim();
+  const mensaje = document.getElementById('mensajeCliente').value.trim();
+
+  let textoPedido = `Hola Anais Bisutería, soy ${nombre}. `;
+  if (producto !== '') {
+    textoPedido += `Me interesan los aretes: *${producto}*. `;
+  }
+  textoPedido += `Consulta: ${mensaje}`;
+
+  const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(textoPedido)}`;
+
+  estadoForm.textContent = 'Abriendo WhatsApp con tu pedido...';
+  window.open(urlWhatsApp, '_blank');
+
+  formContacto.reset();
+  setTimeout(() => {
+    estadoForm.textContent = '';
+  }, 4000);
+});
