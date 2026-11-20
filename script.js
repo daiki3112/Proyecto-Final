@@ -88,3 +88,32 @@ const productosIniciales = [
     imagen: "img/arete11.jpg"
   }
 ];
+
+const gridProductos = document.getElementById('gridProductos');
+
+function mostrarProductos(lista) {
+  gridProductos.innerHTML = '';
+
+  lista.forEach((producto) => {
+    const tarjeta = document.createElement('article');
+    tarjeta.classList.add('tarjeta-producto');
+
+    tarjeta.innerHTML = `
+      <img src="${producto.imagen}" alt="${producto.nombre}" class="img-producto">
+      <div class="info-producto">
+        <span class="categoria-tag">${producto.categoria}</span>
+        <h3>${producto.nombre}</h3>
+        <p>${producto.descripcion}</p>
+        <div class="pie-tarjeta">
+          <span class="precio">${producto.precio}</span>
+          <button class="btn-pedir" data-id="${producto.id}">Lo quiero</button>
+        </div>
+      </div>
+    `;
+
+    gridProductos.appendChild(tarjeta);
+  });
+}
+
+// Cargar todos los productos al abrir la tienda
+mostrarProductos(productosIniciales);

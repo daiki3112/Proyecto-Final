@@ -265,6 +265,14 @@ a {
   font-weight: 500;
 }
 
+.img-producto {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  background-color: #efe5d8;
+}
+
 .info-producto {
   padding: 18px;
   display: flex;
