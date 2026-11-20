@@ -26,21 +26,45 @@
   </header>
 
   <main>
-    <section id="inicio" class="hero">
-      <div class="contenedor hero-contenido">
-        <span class="etiqueta">Hechos a mano con amor</span>
-        <h2>Aretes únicos para darle brillo a tu estilo</h2>
-        <p>Diseños ligeros, hipoalergénicos y elaborados artesanalmente para acompañarte en cada ocasión.</p>
-        <div class="hero-botones">
-          <a href="#catalogo" class="btn-principal">Ver colección</a>
-          <a href="#asistente" class="btn-secundario">¿Cuál me queda mejor?</a>
+  <section id="catalogo" class="seccion">
+      <div class="contenedor">
+        <h2>Nuestra Colección</h2>
+        <p class="subtitulo-seccion">Explora nuestros diseños exclusivos elaborados con materiales ligeros y acabados en oro golfi y acero.</p>
+        
+        <div class="filtros-catalogo" id="filtrosCatalogo">
+          <button class="btn-filtro activo" data-categoria="todos">Todos</button>
+          <button class="btn-filtro" data-categoria="argollas">Argollas</button>
+          <button class="btn-filtro" data-categoria="largos">Largos</button>
+          <button class="btn-filtro" data-categoria="topos">Topos</button>
+        </div>
+
+        <div class="grid-productos" id="gridProductos">
+          <!-- Aquí pintaremos los aretes desde JavaScript -->
         </div>
       </div>
     </section>
 
-    <section id="catalogo"></section>
-    <section id="asistente"></section>
-    <section id="contacto"></section>
+    <section id="asistente" class="seccion">
+      <div class="contenedor">
+        <h2>Asistente de Estilo IA</h2>
+        <p class="subtitulo-seccion">¿No sabes qué aretes elegir? Cuéntanos qué tipo de rostro tienes o para qué ocasión los buscas y te recomendamos el par ideal.</p>
+        
+        <div class="caja-ia" id="cajaAsistente">
+          <!-- Aquí irá la interfaz del recomendador inteligente -->
+        </div>
+      </div>
+    </section>
+
+    <section id="contacto" class="seccion">
+      <div class="contenedor">
+        <h2>Haz tu Pedido o Escríbenos</h2>
+        <p class="subtitulo-seccion">¿Te gustó algún diseño o quieres un par personalizado? Déjanos tus datos y te respondemos pronto.</p>
+        
+        <div class="contenedor-contacto" id="contenedorContacto">
+          <!-- Aquí irá el formulario funcional -->
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
