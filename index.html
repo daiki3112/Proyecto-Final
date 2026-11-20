@@ -69,9 +69,26 @@
         <p class="subtitulo-seccion">¿Te gustó algún diseño o quieres un par personalizado? Déjanos tus datos y te respondemos pronto.</p>
         
         <div class="contenedor-contacto" id="contenedorContacto">
-          <!-- Aquí irá el formulario funcional -->
+          <form class="form-contacto" id="formContacto">
+            <div class="grupo-input">
+              <label for="nombreCliente">Tu nombre</label>
+              <input type="text" id="nombreCliente" placeholder="Ej: Laura Gómez" required>
+            </div>
+
+            <div class="grupo-input">
+              <label for="productoInteres">Arete de interés (opcional)</label>
+              <input type="text" id="productoInteres" placeholder="Ej: Argollas Sol Dorado">
+            </div>
+
+            <div class="grupo-input">
+              <label for="mensajeCliente">Mensaje o detalles del pedido</label>
+              <textarea id="mensajeCliente" rows="4" placeholder="Cuéntanos si los quieres para regalo, color preferido o cualquier duda..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-principal btn-completo">Enviar pedido por WhatsApp</button>
+            <p class="estado-form" id="estadoForm"></p>
+          </form>
         </div>
-      </div>
     </section>
   </main>
 
