@@ -700,7 +700,7 @@ function App() {
                   ✨ Unirme al Club VIP (Formulario)
                 </a>
                 <a
-                  href="https://whatsapp.com/channel/0029Vb9s5Sgb4hdM1isDJ12N"
+                  href="https://whatsapp.com/channel/0029Vb9s5SgB4hdM1isDJ12N"
                   target="_blank"
                   rel="noreferrer"
                   className="btn-whatsapp-canal"
