@@ -719,3 +719,53 @@ function App() {
 
             <div className="contenedor-contacto">
               <form className="form-contacto" onSubmit={enviarContacto}>
+                <div className="grupo-input">
+                  <label>Tu nombre</label>
+                  <input type="text" value={contactoNombre} onChange={(e) => setContactoNombre(e.target.value)} placeholder="Ej: Laura Gómez" required />
+                </div>
+                <div className="grupo-input">
+                  <label>Arete de interés (opcional)</label>
+                  <input type="text" value={contactoArete} onChange={(e) => setContactoArete(e.target.value)} placeholder="Ej: Arete Flor de oro" />
+                </div>
+                <div className="grupo-input">
+                  <label>Mensaje o detalles del pedido</label>
+                  <textarea rows="4" value={contactoMensaje} onChange={(e) => setContactoMensaje(e.target.value)} placeholder="Cuéntanos si los quieres para regalo, color preferido o cualquier duda..." required />
+                </div>
+                <button type="submit" className="btn-principal btn-completo">Enviar pedido por WhatsApp</button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <div className="contenedor" style={{ textAlign: 'center', padding: '20px 0' }}>
+          <p>© 2026 Anelpg Bisutería · Todos los derechos reservados · Hecho en React ⚛️</p>
+        </div>
+      </footer>
+
+      <CarritoModal
+        abierto={carritoAbierto}
+        onCerrar={() => setCarritoAbierto(false)}
+        carrito={carrito}
+        onCambiarCantidad={cambiarCantidad}
+        onEliminar={eliminarDelCarrito}
+        onVaciar={() => setCarrito([])}
+      />
+
+      <CuentaModal
+        abierto={cuentaAbierta}
+        onCerrar={() => setCuentaAbierta(false)}
+        usuarioActivo={usuarioActivo}
+        onLogin={iniciarSesion}
+        onRegistro={registrarCuenta}
+        onLogout={cerrarSesion}
+        productos={productos}
+        onActualizarPrecio={actualizarPrecio}
+      />
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
