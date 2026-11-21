@@ -1,6 +1,7 @@
 const { useState, useEffect } = React;
 
 const NUMERO_WHATSAPP = '573212289682';
+const URL_BACKEND_CHAT = 'https://proyecto-final-bvf1.onrender.com/chat';
 
 const PRODUCTOS_INICIALES = [
   { id: 1, nombre: "Arete Flor de oro", categoria: "Uso Diario", precio: "$45.000", descripcion: "Arete mediano, con detalles en azul marino, ideales para uso diario.", imagen: "img/arete1.jpg" },
@@ -39,6 +40,23 @@ function parsearPrecio(texto) {
 
 function formatearPesos(valor) {
   return '$' + valor.toLocaleString('es-CO');
+}
+
+function obtenerRespuestaLocalIA(pregunta) {
+  const q = pregunta.toLowerCase();
+  if (q.includes('redondo') || q.includes('rostro')) {
+    return 'Para rostro redondo te favorecen muchísimo los diseños largos que estilizan el cuello: te recomiendo los Aretes Atrapasueños Azul ($48.000), Aretes Cascada Coral ($52.000) o Aretes Estrella Marfil ($50.000). ✨';
+  }
+  if (q.includes('noche') || q.includes('fiesta') || q.includes('gala') || q.includes('boda')) {
+    return 'Para eventos de noche destacan los Aretes Flor Nocturna ($42.000), Aretes Estrella Marfil ($50.000), Aretes Atardecer ($50.000) o los Aretes Hibisco Dorado ($50.000). 🌙';
+  }
+  if (q.includes('negro') || q.includes('oscuro')) {
+    return 'Con vestido negro contrastan espectacular los Aretes Flor Turquesa ($48.000), Aretes Estrella Marfil ($50.000) o los Aretes Pétalos Contraste ($42.000). 🖤';
+  }
+  if (q.includes('regalo') || q.includes('precio') || q.includes('valen')) {
+    return 'Nuestros 24 diseños tejidos a mano van desde $20.000 (Aretes Medialuna) hasta $55.000 (Aretes Trío Tropical y Perla Colgante), listos para regalo. 🎁';
+  }
+  return 'Ay, me quedé dormida un momentico despertando el servidor en Render 😅 Pero te recomiendo los Aretes Flor de oro ($45.000) para el día o los Aretes Estrella Marfil ($50.000) para gala. ¡Escríbenos por WhatsApp para pedir!';
 }
 
 // ================= COMPONENTE: BARRA DE NAVEGACIÓN =================
@@ -136,7 +154,7 @@ function Catalogo({ productos, onAgregarCarrito }) {
 // ================= COMPONENTE: STYLIST IA =================
 function StylistIA() {
   const [mensajes, setMensajes] = useState([
-    { autor: 'ia', texto: '¡Hola! Soy la asesora virtual de Anelpg Bisutería. ¿Buscas aretes para una ocasión especial o según la forma de tu rostro?' }
+    { autor: 'ia', texto: '¡Hola! Soy la asesora virtual de Anelpg Bisutería. ¿Buscas aretes para una ocasión especial o según la forma de tu rostro?', mostrarBotonWA: false }
   ]);
   const [input, setInput] = useState('');
   const [cargando, setCargando] = useState(false);
@@ -152,20 +170,24 @@ function StylistIA() {
     const limpio = textoPregunta.trim();
     if (!limpio || cargando) return;
 
-    setMensajes((prev) => [...prev, { autor: 'usuario', texto: limpio }]);
+    setMensajes((prev) => [...prev, { autor: 'usuario', texto: limpio, mostrarBotonWA: false }]);
     setInput('');
     setCargando(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(URL_BACKEND_CHAT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mensaje: limpio })
       });
-      const data = await res.json();
-      setMensajes((prev) => [...prev, { autor: 'ia', texto: data.respuesta || '¡Te recomiendo nuestros Aretes Flor de oro o Aretes Atrapasueños Azul!' }]);
+      if (!res.ok) throw new Error('Error en servidor');
+      const datos = await res.json();
+      const resp = datos.respuesta || obtenerRespuestaLocalIA(limpio);
+      const llevarAWhatsApp = /whatsapp|nombre|pedido/i.test(resp);
+      setMensajes((prev) => [...prev, { autor: 'ia', texto: resp, mostrarBotonWA: llevarAWhatsApp }]);
     } catch (err) {
-      setMensajes((prev) => [...prev, { autor: 'ia', texto: 'Para destacar tu look te recomiendo los Aretes Flor Nocturna ($42.000) o los Aretes Flor de oro ($45.000).' }]);
+      const respLocal = obtenerRespuestaLocalIA(limpio);
+      setMensajes((prev) => [...prev, { autor: 'ia', texto: respLocal, mostrarBotonWA: true }]);
     } finally {
       setCargando(false);
     }
@@ -180,11 +202,23 @@ function StylistIA() {
         <div className="chat-contenedor">
           <div className="chat-mensajes">
             {mensajes.map((m, idx) => (
-              <div key={idx} className={`mensaje ${m.autor === 'ia' ? 'mensaje-ia' : 'mensaje-usuario'}`}>
-                {m.texto}
-              </div>
+              <React.Fragment key={idx}>
+                <div className={`mensaje ${m.autor === 'ia' ? 'mensaje-ia' : 'mensaje-usuario'}`}>
+                  {m.texto}
+                </div>
+                {m.mostrarBotonWA && (
+                  <a
+                    href={`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent('Hola Anelpg Bisutería 💖 Vengo de tu página y quiero hacer un pedido')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ display: 'block', textAlign: 'center', margin: '10px', padding: '10px', background: '#25D366', color: 'white', fontWeight: 600, textDecoration: 'none', borderRadius: '20px' }}
+                  >
+                    Ir a WhatsApp y hacer mi pedido 💖
+                  </a>
+                )}
+              </React.Fragment>
             ))}
-            {cargando && <div className="mensaje mensaje-ia">Escribiendo recomendación... ✨</div>}
+            {cargando && <div className="mensaje mensaje-ia">Estoy pensando tu look... ✨</div>}
           </div>
 
           <div className="chat-sugerencias">
@@ -547,8 +581,21 @@ function App() {
               <h2>¿Quieres recibir ofertas y el catálogo nuevo?</h2>
               <p className="subtitulo-seccion">Únete a nuestro Club VIP para enterarte primero de nuevos diseños artesanales, descuentos especiales y precios al por mayor.</p>
               <div className="botones-vip">
-                <a href="https://whatsapp.com/channel/0029Vb9s5Sgb4hdM1isDJ12N" target="_blank" className="btn-whatsapp-canal">
-                  💬 Unirme al Canal de WhatsApp
+                <a
+                  href={`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent('¡Hola Anelpg Bisutería! 💖 Quiero registrarme en el Club VIP para recibir ofertas y el catálogo nuevo.')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-principal"
+                >
+                  ✨ Quiero recibir ofertas (Registro VIP)
+                </a>
+                <a
+                  href={`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent('¡Hola! Quiero unirme a la comunidad VIP de Anelpg Bisutería 🛍️')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-whatsapp-canal"
+                >
+                  💬 Unirme por WhatsApp
                 </a>
               </div>
             </div>
