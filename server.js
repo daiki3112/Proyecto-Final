@@ -1,43 +1,43 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
-app.use(cors());
-app.use(express.json());
+// Chatbot Anelpg con Gemini - hecho por Ana Prieto
+const form = document.getElementById('formChat');
+const input = document.getElementById('inputChat');
+const mensajesDiv = document.getElementById('chatMensajes');
 
-const GEMINI_KEY = process.env.GEMINI_API_KEY; // Aquí va tu clave, pero en Render, no aquí
+// Tu backend ya en Live
+const URL_BACKEND = "https://proyecto-final-bvf1.onrender.com/chat";
+const numeroWhatsApp = "573212289682";
 
-app.post('/chat', async (req, res) => {
-  const mensajeUsuario = req.body.mensaje;
+function mostrarMensaje(texto, esIA) {
+  let clase = esIA ? "mensaje mensaje-ia" : "mensaje mensaje-usuario";
+  mensajesDiv.innerHTML += `<div class="${clase}">${texto}</div>`;
+  mensajesDiv.scrollTop = mensajesDiv.scrollHeight;
+}
 
-  // Le decimos a Gemini cómo debe comportarse: es tu Stylist IA
-  const prompt = `
-  Eres la Stylist IA de Anais Bisutería, una tienda de aretes en Colombia.
-  Hablas lindo, con emojis, como una amiga.
-  Vendes aretes dorados y plateados, por unidad y por mayor (desde 6 pares con descuento).
-  Si la clienta quiere hacer un pedido, pregúntale:
-    1. ¿Por unidad o por mayor?
-    2. ¿Dorado o plateado?
-    3. ¿Cuántos pares?
-    4. ¿Su nombre?
-  Y al final dile que le vas a mandar a WhatsApp.
-  No inventes precios exactos, di que por WhatsApp le dan el precio.
-  Mensaje de la clienta: ${mensajeUsuario}
-  `;
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  let texto = input.value.trim();
+  if (texto == "") return;
+
+  mostrarMensaje(texto, false);
+  input.value = "";
+  mostrarMensaje("Estoy pensando tu look... ✨", true);
 
   try {
-   const respuesta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+    let res = await fetch(URL_BACKEND, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
+      body: JSON.stringify({ mensaje: texto })
     });
-    const datos = await respuesta.json();
-    const textoIA = datos.candidates[0].content.parts[0].text;
-    res.json({ respuesta: textoIA });
-  } catch (e) {
-    res.json({ respuesta: "Ay, se me fue el internet un momentico 💖 ¿Me repites tu pregunta?" });
+    let datos = await res.json();
+
+    mensajesDiv.lastChild.remove();
+    mostrarMensaje(datos.respuesta, true);
+
+    if (datos.respuesta.toLowerCase().includes("whatsapp") || datos.respuesta.toLowerCase().includes("nombre")) {
+      mensajesDiv.innerHTML += `<a href="https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent("Hola Anais, vengo de tu página y quiero hacer un pedido")}" target="_blank" style="display:block; text-align:center; margin:10px; padding:10px; background:#25D366; color:white; text-decoration:none; border-radius:20px;">Ir a WhatsApp y hacer mi pedido 💖</a>`;
+    }
+  } catch (error) {
+    mensajesDiv.lastChild.remove();
+    mostrarMensaje("Ay, me quedé dormida un momentico, es que soy gratis en Render 😅 ¿Me repites tu pregunta?", true);
   }
 });
-
-app.listen(3000, () => console.log("Backend Anais listo"));
