@@ -87,7 +87,7 @@ const productosIniciales = [
     descripcion: "Lindos y clasicos para ocasiones especiales.",
     imagen: "img/arete11.jpg"
   },
-{
+  {
     id: 12,
     nombre: "Aretes Atrapasueños Azul",
     precio: "$48.000",
