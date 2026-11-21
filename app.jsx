@@ -42,21 +42,35 @@ function formatearPesos(valor) {
   return '$' + valor.toLocaleString('es-CO');
 }
 
-function obtenerRespuestaLocalIA(pregunta) {
-  const q = pregunta.toLowerCase();
-  if (q.includes('redondo') || q.includes('rostro')) {
-    return 'Para rostro redondo te favorecen muchísimo los diseños largos que estilizan el cuello: te recomiendo los Aretes Atrapasueños Azul ($48.000), Aretes Cascada Coral ($52.000) o Aretes Estrella Marfil ($50.000). ✨';
+// ================= MOTOR INTELIGENTE SOBRE LOS 24 ARETES =================
+function obtenerRespuestaInteligente24(pregunta, productos = PRODUCTOS_INICIALES) {
+  const q = pregunta.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  const palabras = q.split(/\s+/).filter((w) => w.length > 3 && !['para', 'unos', 'unas', 'aretes', 'arete', 'tienen', 'busco', 'quiero', 'cuales', 'como', 'mejor'].includes(w));
+  const coincidencias = productos.filter((p) => {
+    const textoProd = `${p.nombre} ${p.descripcion} ${p.categoria}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return palabras.some((pal) => textoProd.includes(pal));
+  });
+
+  if (coincidencias.length > 0) {
+    const top = coincidencias.slice(0, 3).map((p) => `• ${p.nombre} (${p.precio}): ${p.descripcion}`).join('\n');
+    return `¡Mira estas opciones de nuestra colección de 24 diseños que encajan con lo que buscas! ✨\n\n${top}\n\n¿Te gustaría agregar alguno al carrito o pedirlo por WhatsApp? 💖`;
   }
-  if (q.includes('noche') || q.includes('fiesta') || q.includes('gala') || q.includes('boda')) {
-    return 'Para eventos de noche destacan los Aretes Flor Nocturna ($42.000), Aretes Estrella Marfil ($50.000), Aretes Atardecer ($50.000) o los Aretes Hibisco Dorado ($50.000). 🌙';
+
+  if (q.includes('redondo') || q.includes('rostro') || q.includes('alargar')) {
+    return 'Para rostro redondo los diseños largos y estilizados quedan divinos: te recomiendo Aretes Atrapasueños Azul ($48.000), Aretes Cascada Coral ($52.000) o Arete de perla negra ($40.000). ✨';
   }
-  if (q.includes('negro') || q.includes('oscuro')) {
-    return 'Con vestido negro contrastan espectacular los Aretes Flor Turquesa ($48.000), Aretes Estrella Marfil ($50.000) o los Aretes Pétalos Contraste ($42.000). 🖤';
+  if (q.includes('noche') || q.includes('fiesta') || q.includes('gala') || q.includes('boda') || q.includes('grado')) {
+    return 'Para eventos de noche tenemos joyas espectaculares como Aretes Flor Nocturna ($42.000), Aretes Estrella Marfil ($50.000), Aretes Trío Tropical ($55.000) y Aretes Hibisco Dorado ($50.000). 🌙';
   }
-  if (q.includes('regalo') || q.includes('precio') || q.includes('valen')) {
-    return 'Nuestros 24 diseños tejidos a mano van desde $20.000 (Aretes Medialuna) hasta $55.000 (Aretes Trío Tropical y Perla Colgante), listos para regalo. 🎁';
+  if (q.includes('barato') || q.includes('economico') || q.includes('precio') || q.includes('presupuesto')) {
+    return 'Tenemos 24 referencias desde $20.000 (Aretes Medialuna) y $25.000 (Aretes Silvestres), hasta ediciones especiales de $55.000 como Aretes Trío Tropical y Aretes Perla Colgante. 🎁';
   }
-  return 'Ay, me quedé dormida un momentico despertando el servidor en Render 😅 Pero te recomiendo los Aretes Flor de oro ($45.000) para el día o los Aretes Estrella Marfil ($50.000) para gala. ¡Escríbenos por WhatsApp para pedir!';
+  if (q.includes('todos') || q.includes('catalogo') || q.includes('cuantos')) {
+    return 'Contamos con 24 diseños exclusivos tejidos a mano divididos en Uso Diario, Eventos y Noche, y Clásicos (desde la ref. #1 Arete Flor de oro hasta la #24 Aretes Flor Solar). 🌸';
+  }
+
+  return '¡Con gusto te asesoro! 💖 Tenemos 24 diseños tejidos a mano: para un look fresco te sugiero Aretes Cayena Naranja ($40.000) o Aretes Flor Solar ($38.000); para gala, Aretes Orquídea Blanca ($45.000) o Aretes Flor Turquesa ($48.000). Dime un color o evento y te doy la mejor opción.';
 }
 
 // ================= COMPONENTE: PANTALLA DE CARGA FLUIDA =================
@@ -99,6 +113,7 @@ function PantallaCarga({ oculta }) {
     </div>
   );
 }
+
 // ================= COMPONENTE: BARRA DE NAVEGACIÓN =================
 function Navbar({ totalItemsCarrito, onAbrirCarrito, onAbrirCuenta, usuarioActivo }) {
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -206,7 +221,6 @@ function StylistIA({ productos }) {
 
   const cajaMensajesRef = useRef(null);
 
-  // Baja automáticamente al último mensaje cada vez que cambia el chat
   useEffect(() => {
     if (cajaMensajesRef.current) {
       cajaMensajesRef.current.scrollTop = cajaMensajesRef.current.scrollHeight;
@@ -234,6 +248,8 @@ function StylistIA({ productos }) {
     setInput('');
     setCargando(true);
 
+    const usuarioQuiereCerrar = /(quiero|añadir|agregar|carrito|pedir|pedido|comprar|decidi|decidí|listo|gracias|chao|adios|adiós|whatsapp)/i.test(limpio);
+
     try {
       const res = await fetch(URL_BACKEND_CHAT, {
         method: 'POST',
@@ -247,20 +263,23 @@ function StylistIA({ productos }) {
       const datos = await res.json();
       let resp = datos.respuesta || obtenerRespuestaInteligente24(limpio, productos);
 
-      // Detecta si la IA o el cliente ya cerraron la decisión hacia WhatsApp
-      const debeCerrar = Boolean(datos.cerrarChat) || /(nos vemos en whatsapp|te espero en whatsapp|fue un gusto asesorarte|cualquier otra duda.*whatsapp|ya que lo pensaste.*whatsapp|hasta pronto)/i.test(resp);
+      const debeCerrar = usuarioQuiereCerrar || Boolean(datos.cerrarChat) || /(nos vemos en whatsapp|te espero en whatsapp|fue un gusto asesorarte|cualquier otra duda.*whatsapp|ya que lo pensaste.*whatsapp|hasta pronto)/i.test(resp);
+
+      if (usuarioQuiereCerrar && !/(fue un gusto asesorarte|nos vemos allá)/i.test(resp)) {
+        resp = '¡Listo, hermosa! 💖 Ya que lo pensaste y tienes claro tu pedido, toca el botón verde de aquí abajo para ir directo a WhatsApp y cerrarlo. ¡Fue un gusto asesorarte, nos vemos allá! ✨🌸';
+      }
+
       const llevarAWhatsApp = debeCerrar || /whatsapp|nombre|pedido|carrito/i.test(resp);
 
       setMensajes((prev) => [...prev, { autor: 'ia', texto: resp, mostrarBotonWA: llevarAWhatsApp }]);
       if (debeCerrar) setCharlaCerrada(true);
     } catch (err) {
-      const esCierreLocal = /(decidi|decidí|pedir|comprar|listo|gracias|chao|adios|adiós|whatsapp)/i.test(limpio);
-      const respLocal = esCierreLocal
-        ? '¡Qué emoción! 💖 Ya que tienes claro tu diseño ideal, te dejo el botón directo para concretar tu envío por WhatsApp. ¡Fue un gusto asesorarte, nos vemos allá! ✨🌸'
+      const respLocal = usuarioQuiereCerrar
+        ? '¡Listo, hermosa! 💖 Ya que lo pensaste y tienes claro tu pedido, toca el botón verde de aquí abajo para ir directo a WhatsApp y cerrarlo. ¡Fue un gusto asesorarte, nos vemos allá! ✨🌸'
         : obtenerRespuestaInteligente24(limpio, productos);
 
       setMensajes((prev) => [...prev, { autor: 'ia', texto: respLocal, mostrarBotonWA: true }]);
-      if (esCierreLocal) setCharlaCerrada(true);
+      if (usuarioQuiereCerrar) setCharlaCerrada(true);
     } finally {
       setCargando(false);
     }
@@ -306,436 +325,4 @@ function StylistIA({ productos }) {
 
               <form className="chat-form" onSubmit={(e) => { e.preventDefault(); enviarMensaje(input); }}>
                 <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ej: Busco aretes amarillos o de flores para regalo..."
-                  required
-                />
-                <button type="submit" className="btn-enviar-chat">Enviar</button>
-              </form>
-            </>
-          ) : (
-            <div style={{ textAlign: 'center', padding: '14px', borderTop: '1px solid #eadfd5', background: '#faf6f2' }}>
-              <p style={{ fontSize: '0.9rem', color: '#6b5848', marginBottom: '10px' }}>
-                ✨ Asesoría finalizada · Te esperamos en WhatsApp para preparar tu pedido
-              </p>
-              <button type="button" onClick={reiniciarChat} className="btn-admin-nav" style={{ cursor: 'pointer' }}>
-                🔄 Iniciar nueva consulta
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
-// ================= COMPONENTE: MODAL CARRITO =================
-function CarritoModal({ abierto, onCerrar, carrito, onCambiarCantidad, onEliminar, onVaciar }) {
-  const [nombreComprador, setNombreComprador] = useState('');
-  const [metodoPago, setMetodoPago] = useState('Nequi');
-
-  if (!abierto) return null;
-
-  const total = carrito.reduce((acc, item) => acc + parsearPrecio(item.precio) * item.cantidad, 0);
-
-  const finalizarCompra = () => {
-    if (!nombreComprador.trim()) {
-      alert('Por favor escribe tu nombre para preparar el envío 💖');
-      return;
-    }
-
-    let detalle = '';
-    carrito.forEach((item) => {
-      const sub = parsearPrecio(item.precio) * item.cantidad;
-      detalle += `• ${item.cantidad}x ${item.nombre} (${formatearPesos(sub)})\n`;
-    });
-
-    const msg = `¡Hola Anelpg Bisutería! 💖 Quiero confirmar mi compra:\n\n*Cliente:* ${nombreComprador}\n*Método de pago:* ${metodoPago}\n\n*Detalle del pedido:*\n${detalle}\n*Total a pagar:* ${formatearPesos(total)}`;
-    window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
-    onVaciar();
-    onCerrar();
-  };
-
-  return (
-    <div className="modal-fondo abierto">
-      <div className="modal-caja" style={{ maxWidth: '520px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-          <h3>🛍️ Tu Carrito de Compras</h3>
-          <button onClick={onCerrar} style={{ background: 'none', border: 'none', fontSize: '1.3rem', cursor: 'pointer' }}>✕</button>
-        </div>
-
-        {carrito.length === 0 ? (
-          <p className="carrito-vacio-msg">Tu carrito está vacío 🛍️<br />Explora el catálogo y agrega tus aretes favoritos.</p>
-        ) : (
-          <>
-            <div style={{ maxHeight: '260px', overflowY: 'auto', marginBottom: '15px' }}>
-              {carrito.map((item) => (
-                <div key={item.id} className="item-carrito">
-                  <div className="item-carrito-info">
-                    <img src={item.imagen} alt={item.nombre} className="item-carrito-img" />
-                    <div>
-                      <strong>{item.nombre}</strong>
-                      <div style={{ fontSize: '0.85rem', color: '#7a6655' }}>{item.precio} c/u</div>
-                    </div>
-                  </div>
-                  <div className="item-carrito-controles">
-                    <button className="btn-cant" onClick={() => onCambiarCantidad(item.id, -1)}>-</button>
-                    <span><strong>{item.cantidad}</strong></span>
-                    <button className="btn-cant" onClick={() => onCambiarCantidad(item.id, 1)}>+</button>
-                    <button className="btn-eliminar-item" onClick={() => onEliminar(item.id)}>🗑️</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="grupo-input">
-              <label>Tu nombre para el envío</label>
-              <input type="text" value={nombreComprador} onChange={(e) => setNombreComprador(e.target.value)} placeholder="Ej: Camila Pérez" />
-            </div>
-
-            <div className="grupo-input">
-              <label>Método de pago</label>
-              <select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d8c7b8' }}>
-                <option value="Nequi">Nequi</option>
-                <option value="Daviplata">Daviplata</option>
-                <option value="Transferencia Bancolombia">Transferencia Bancolombia</option>
-                <option value="Pago contra entrega">Pago contra entrega</option>
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '15px 0', fontSize: '1.1rem' }}>
-              <strong>Total a pagar:</strong>
-              <strong>{formatearPesos(total)}</strong>
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button className="btn-admin-nav" onClick={onVaciar}>Vaciar</button>
-              <button className="btn-principal" style={{ flex: 1 }} onClick={finalizarCompra}>Confirmar por WhatsApp</button>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ================= COMPONENTE: MODAL MI CUENTA =================
-function CuentaModal({ abierto, onCerrar, usuarioActivo, onLogin, onRegistro, onLogout, productos, onActualizarPrecio }) {
-  const [modo, setModo] = useState('login');
-  const [usuario, setUsuario] = useState('');
-  const [clave, setClave] = useState('');
-  const [nombre, setNombre] = useState('');
-  const [mensaje, setMensaje] = useState('');
-  const [preciosEdit, setPreciosEdit] = useState({});
-
-  if (!abierto) return null;
-
-  const manejarLogin = (e) => {
-    e.preventDefault();
-    const ok = onLogin(usuario, clave);
-    if (!ok) setMensaje('Usuario o contraseña incorrectos.');
-    else { setMensaje(''); setUsuario(''); setClave(''); }
-  };
-
-  const manejarRegistro = (e) => {
-    e.preventDefault();
-    const err = onRegistro(nombre, usuario, clave);
-    if (err) setMensaje(err);
-    else { setMensaje(''); setNombre(''); setUsuario(''); setClave(''); }
-  };
-
-  return (
-    <div className="modal-fondo abierto">
-      <div className="modal-caja" style={{ maxWidth: '500px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <h3>{usuarioActivo ? `Hola, ${usuarioActivo.nombre}` : 'Mi Cuenta | Anelpg Bisutería'}</h3>
-          <button onClick={onCerrar} style={{ background: 'none', border: 'none', fontSize: '1.3rem', cursor: 'pointer' }}>✕</button>
-        </div>
-
-        {!usuarioActivo ? (
-          <>
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
-              <button className={modo === 'login' ? 'btn-principal' : 'btn-admin-nav'} onClick={() => { setModo('login'); setMensaje(''); }}>Iniciar Sesión</button>
-              <button className={modo === 'registro' ? 'btn-principal' : 'btn-admin-nav'} onClick={() => { setModo('registro'); setMensaje(''); }}>Crear Cuenta</button>
-            </div>
-
-            {modo === 'login' ? (
-              <form onSubmit={manejarLogin}>
-                <div className="grupo-input">
-                  <label>Usuario</label>
-                  <input type="text" value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="Ej: admin" required />
-                </div>
-                <div className="grupo-input">
-                  <label>Contraseña</label>
-                  <input type="password" value={clave} onChange={(e) => setClave(e.target.value)} placeholder="••••••••" required />
-                </div>
-                {mensaje && <p style={{ color: 'crimson', marginBottom: '10px' }}>{mensaje}</p>}
-                <button type="submit" className="btn-principal btn-completo">Entrar</button>
-              </form>
-            ) : (
-              <form onSubmit={manejarRegistro}>
-                <div className="grupo-input">
-                  <label>Tu Nombre</label>
-                  <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Ej: Camila Pérez" required />
-                </div>
-                <div className="grupo-input">
-                  <label>Nombre de usuario</label>
-                  <input type="text" value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="Ej: camila_2026" required />
-                </div>
-                <div className="grupo-input">
-                  <label>Contraseña</label>
-                  <input type="password" value={clave} onChange={(e) => setClave(e.target.value)} required />
-                </div>
-                {mensaje && <p style={{ color: 'crimson', marginBottom: '10px' }}>{mensaje}</p>}
-                <button type="submit" className="btn-principal btn-completo">Crear mi cuenta</button>
-              </form>
-            )}
-          </>
-        ) : (
-          <div>
-            <p style={{ marginBottom: '12px', fontSize: '0.9rem', color: '#6b5848' }}>Gestión de precios del catálogo en vivo:</p>
-            <div style={{ maxHeight: '280px', overflowY: 'auto', marginBottom: '15px' }}>
-              {productos.map((p) => (
-                <div key={p.id} className="item-admin">
-                  <div className="item-admin-info"><strong>{p.nombre}</strong></div>
-                  <div className="item-admin-controles">
-                    <input
-                      type="text"
-                      className="input-precio-admin"
-                      value={preciosEdit[p.id] !== undefined ? preciosEdit[p.id] : p.precio}
-                      onChange={(e) => setPreciosEdit({ ...preciosEdit, [p.id]: e.target.value })}
-                    />
-                    <button
-                      type="button"
-                      className="btn-guardar-precio"
-                      onClick={() => onActualizarPrecio(p.id, preciosEdit[p.id] ?? p.precio)}
-                    >
-                      Guardar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button className="btn-admin-nav" onClick={onLogout}>Cerrar Sesión</button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ================= COMPONENTE PRINCIPAL: APP =================
-function App() {
-  const [introOculta, setIntroOculta] = useState(false);
-
-  const [productos, setProductos] = useState(() => {
-    const guardados = JSON.parse(localStorage.getItem('anelpg_productos'));
-    return Array.isArray(guardados) && guardados.length >= 24 ? guardados : PRODUCTOS_INICIALES;
-  });
-
-  const [carrito, setCarrito] = useState(() => JSON.parse(localStorage.getItem('anelpg_carrito')) || []);
-  const [cuentas, setCuentas] = useState(() => JSON.parse(localStorage.getItem('anelpg_cuentas')) || CUENTAS_DEFAULT);
-  const [usuarioActivo, setUsuarioActivo] = useState(() => JSON.parse(localStorage.getItem('anelpg_usuario_activo')) || null);
-
-  const [carritoAbierto, setCarritoAbierto] = useState(false);
-  const [cuentaAbierta, setCuentaAbierta] = useState(false);
-
-  const [contactoNombre, setContactoNombre] = useState('');
-  const [contactoArete, setContactoArete] = useState('');
-  const [contactoMensaje, setContactoMensaje] = useState('');
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIntroOculta(true), 1900);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('anelpg_productos', JSON.stringify(productos));
-  }, [productos]);
-
-  useEffect(() => {
-    localStorage.setItem('anelpg_carrito', JSON.stringify(carrito));
-  }, [carrito]);
-
-  const agregarAlCarrito = (producto) => {
-    setCarrito((prev) => {
-      const existe = prev.find((item) => item.id === producto.id);
-      if (existe) {
-        return prev.map((item) => item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item);
-      }
-      return [...prev, { ...producto, cantidad: 1 }];
-    });
-  };
-
-  const cambiarCantidad = (id, delta) => {
-    setCarrito((prev) =>
-      prev
-        .map((item) => item.id === id ? { ...item, cantidad: item.cantidad + delta } : item)
-        .filter((item) => item.cantidad > 0)
-    );
-  };
-
-  const eliminarDelCarrito = (id) => {
-    setCarrito((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const iniciarSesion = (user, pass) => {
-    const encontrada = cuentas.find((c) => c.usuario.toLowerCase() === user.trim().toLowerCase() && c.clave === pass.trim());
-    if (encontrada) {
-      setUsuarioActivo(encontrada);
-      localStorage.setItem('anelpg_usuario_activo', JSON.stringify(encontrada));
-      return true;
-    }
-    return false;
-  };
-
-  const registrarCuenta = (nombre, user, pass) => {
-    if (cuentas.some((c) => c.usuario.toLowerCase() === user.trim().toLowerCase())) {
-      return 'Ese nombre de usuario ya está en uso.';
-    }
-    const nueva = { nombre: nombre.trim(), usuario: user.trim(), clave: pass.trim() };
-    const actualizadas = [...cuentas, nueva];
-    setCuentas(actualizadas);
-    localStorage.setItem('anelpg_cuentas', JSON.stringify(actualizadas));
-    setUsuarioActivo(nueva);
-    localStorage.setItem('anelpg_usuario_activo', JSON.stringify(nueva));
-    return null;
-  };
-
-  const cerrarSesion = () => {
-    setUsuarioActivo(null);
-    localStorage.removeItem('anelpg_usuario_activo');
-  };
-
-  const actualizarPrecio = (id, nuevoPrecio) => {
-    if (!nuevoPrecio.trim()) return;
-    setProductos((prev) => prev.map((p) => p.id === id ? { ...p, precio: nuevoPrecio.trim() } : p));
-  };
-
-  const enviarContacto = (e) => {
-    e.preventDefault();
-    let texto = `Hola Anelpg Bisutería, soy ${contactoNombre}. `;
-    if (contactoArete.trim()) texto += `Me interesan los aretes: *${contactoArete}*. `;
-    texto += `Consulta: ${contactoMensaje}`;
-    window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
-    setContactoNombre('');
-    setContactoArete('');
-    setContactoMensaje('');
-  };
-
-  const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-
-  return (
-    <>
-      <PantallaCarga oculta={introOculta} />
-
-      <Navbar
-        totalItemsCarrito={totalUnidades}
-        onAbrirCarrito={() => setCarritoAbierto(true)}
-        onAbrirCuenta={() => setCuentaAbierta(true)}
-        usuarioActivo={usuarioActivo}
-      />
-
-      <main>
-        <section id="inicio" className="hero">
-          <div className="contenedor hero-contenido">
-            <span className="etiqueta">Hecho a mano con amor</span>
-            <h1>Aretes artesanales que resaltan tu estilo</h1>
-            <p>Diseños únicos en mostacilla y tejidos tradicionales creados para acompañarte todos los días y en tus eventos especiales.</p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a href="#catalogo" className="btn-principal">Ver Colección</a>
-              <a href="#asistente" className="btn-admin-nav" style={{ padding: '12px 24px' }}>Asesoría con IA</a>
-            </div>
-          </div>
-        </section>
-
-        <Catalogo productos={productos} onAgregarCarrito={agregarAlCarrito} />
-
-        <StylistIA />
-
-        <section id="comunidad" className="seccion">
-          <div className="contenedor">
-            <div className="caja-vip">
-              <span className="etiqueta">Comunidad Anelpg</span>
-              <h2>¿Quieres recibir ofertas y el catálogo nuevo?</h2>
-              <p className="subtitulo-seccion">Únete a nuestro Club VIP para enterarte primero de nuevos diseños artesanales, descuentos especiales y precios al por mayor.</p>
-              <div className="botones-vip">
-                <a
-                  href="https://docs.google.com/forms/d/e/1FAIpQLSeCTokTvUu_K7EyCyAuQcvhiFJy5g5h24dHJ91aeofPK5eTUw/viewform?usp=sharing&ouid=110271003313365521092"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-principal"
-                >
-                  ✨ Unirme al Club VIP (Formulario)
-                </a>
-                <a
-                  href="https://whatsapp.com/channel/0029Vb9s5Sgb4hdM1isDJ12N"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-whatsapp-canal"
-                >
-                  💬 Unirme al Canal de WhatsApp
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="contacto" className="seccion">
-          <div className="contenedor">
-            <h2>Contáctanos y Haz tu Pedido</h2>
-            <p className="subtitulo-seccion">¿Tienes dudas o quieres personalizar tus aretes? Escríbenos directo a WhatsApp.</p>
-
-            <div className="contenedor-contacto">
-              <form className="form-contacto" onSubmit={enviarContacto}>
-                <div className="grupo-input">
-                  <label>Tu nombre</label>
-                  <input type="text" value={contactoNombre} onChange={(e) => setContactoNombre(e.target.value)} placeholder="Ej: Laura Gómez" required />
-                </div>
-                <div className="grupo-input">
-                  <label>Arete de interés (opcional)</label>
-                  <input type="text" value={contactoArete} onChange={(e) => setContactoArete(e.target.value)} placeholder="Ej: Arete Flor de oro" />
-                </div>
-                <div className="grupo-input">
-                  <label>Mensaje o detalles del pedido</label>
-                  <textarea rows="4" value={contactoMensaje} onChange={(e) => setContactoMensaje(e.target.value)} placeholder="Cuéntanos si los quieres para regalo, color preferido o cualquier duda..." required />
-                </div>
-                <button type="submit" className="btn-principal btn-completo">Enviar pedido por WhatsApp</button>
-              </form>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer>
-        <div className="contenedor" style={{ textAlign: 'center', padding: '20px 0' }}>
-          <p>© 2026 Anelpg Bisutería · Todos los derechos reservados · Hecho en React ⚛️</p>
-        </div>
-      </footer>
-
-      <CarritoModal
-        abierto={carritoAbierto}
-        onCerrar={() => setCarritoAbierto(false)}
-        carrito={carrito}
-        onCambiarCantidad={cambiarCantidad}
-        onEliminar={eliminarDelCarrito}
-        onVaciar={() => setCarrito([])}
-      />
-
-      <CuentaModal
-        abierto={cuentaAbierta}
-        onCerrar={() => setCuentaAbierta(false)}
-        usuarioActivo={usuarioActivo}
-        onLogin={iniciarSesion}
-        onRegistro={registrarCuenta}
-        onLogout={cerrarSesion}
-        productos={productos}
-        onActualizarPrecio={actualizarPrecio}
-      />
-    </>
-  );
-}
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+                  type
