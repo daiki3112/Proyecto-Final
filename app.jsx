@@ -740,7 +740,7 @@ function App() {
 
       <footer>
         <div className="contenedor" style={{ textAlign: 'center', padding: '20px 0' }}>
-          <p>© 2026 Anelpg Bisutería · Todos los derechos reservados · Hecho en React ⚛️</p>
+          <p>© 2026 Anelpg Bisutería · Todos los derechos reservados · Artesanía Colombiana Hecha a Mano ✨</p>
         </div>
       </footer>
 
