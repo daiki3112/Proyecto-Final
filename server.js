@@ -9,174 +9,169 @@ app.use(express.static(path.join(__dirname)));
 
 const GEMINI_KEY = process.env.GEMINI_API_KEY;
 
-const PROMPT_BASE = `Eres la Stylist IA y asesora experta en imagen de la tienda colombiana "Anelpg Bisutería", especializada en aretes artesanales hechos a mano.
+// ================= CATÁLOGO OFICIAL DE 24 ARETES =================
+const CATALOGO = [
+  { id: 1, nombre: "Arete Flor de oro", categoria: "Uso Diario", precio: "$45.000", descripcion: "Mediano con detalles en azul marino, ideal para uso diario y oficina.", tags: ["flor", "oro", "dorado", "azul", "marino", "diario", "oficina", "mediano"] },
+  { id: 2, nombre: "Arete de perla negra", categoria: "Eventos y Noche", precio: "$40.000", descripcion: "Largos con perlas negras y acabados dorados, estilizan rostro redondo y cuadrado.", tags: ["perla", "negra", "negro", "largo", "largos", "redondo", "cuadrado", "noche", "gala"] },
+  { id: 3, nombre: "Aretes torbellino colorido", categoria: "Eventos y Noche", precio: "$35.000", descripcion: "Medianos llenos de color, ideales para eventos de día o looks alegres.", tags: ["colorido", "colores", "alegre", "fiesta", "dia", "mediano"] },
+  { id: 4, nombre: "Aretes Florares dorados", categoria: "Clásicos", precio: "$30.000", descripcion: "Diseño floral brillante y versátil, combinan con todo tipo de look.", tags: ["flor", "flores", "dorado", "dorados", "clasico", "versatil", "economico"] },
+  { id: 5, nombre: "Aretes vitrales", categoria: "Uso Diario", precio: "$35.000", descripcion: "Pequeños con acabado artístico tipo vitral clásico, toque delicado.", tags: ["vitral", "vitrales", "pequeno", "pequenos", "delicado", "diario", "alargado"] },
+  { id: 6, nombre: "Aretes girasol", categoria: "Uso Diario", precio: "$45.000", descripcion: "Pequeños, cómodos y femeninos, ideales para regalo o uso diario.", tags: ["girasol", "amarillo", "flor", "regalo", "comodo", "pequeno", "diario"] },
+  { id: 7, nombre: "Aretes Atardecer", categoria: "Eventos y Noche", precio: "$50.000", descripcion: "Diseño llamativo y sofisticado para destacar en fiestas, cenas o eventos de noche.", tags: ["atardecer", "naranja", "noche", "fiesta", "cena", "elegante", "sofisticado"] },
+  { id: 8, nombre: "Aretes Medialuna", categoria: "Uso Diario", precio: "$20.000", descripcion: "Pequeños y minimalistas en forma de media luna (los más económicos).", tags: ["medialuna", "luna", "minimalista", "economico", "barato", "pequeno", "diario"] },
+  { id: 9, nombre: "Aretes Silvestres", categoria: "Clásicos", precio: "$25.000", descripcion: "Inspirados en pétalos naturales, ligeros y románticos.", tags: ["silvestres", "petalo", "natural", "ligero", "romantico", "economico", "regalo"] },
+  { id: 10, nombre: "Aretes Perla Colgante", categoria: "Clásicos", precio: "$55.000", descripcion: "Clásicos largos con acabado dorado (pieza premium para novias, grados y gala).", tags: ["perla", "colgante", "dorado", "premium", "novia", "boda", "grado", "largo", "redondo"] },
+  { id: 11, nombre: "Aretes Hamaca", categoria: "Clásicos", precio: "$40.000", descripcion: "Clásicos con movimiento elegante para ocasiones especiales.", tags: ["hamaca", "clasico", "movimiento", "especial", "ovalado"] },
+  { id: 12, nombre: "Aretes Atrapasueños Azul", categoria: "Eventos y Noche", precio: "$48.000", descripcion: "Tejidos a mano en degradé azul celeste, rey y negro con flecos largos.", tags: ["atrapasuenos", "azul", "celeste", "rey", "negro", "flecos", "largo", "redondo", "noche"] },
+  { id: 13, nombre: "Aretes Cascada Coral", categoria: "Eventos y Noche", precio: "$52.000", descripcion: "Diseño floral largo en tonos blanco, rosa pastel y coral vibrante.", tags: ["cascada", "coral", "rosa", "rosado", "blanco", "floral", "largo", "redondo", "fiesta"] },
+  { id: 14, nombre: "Aretes Orquídea Blanca", categoria: "Clásicos", precio: "$45.000", descripcion: "Orquídea artesanal blanca con bordes fucsia y centro amarillo.", tags: ["orquidea", "blanca", "blanco", "fucsia", "flor", "clasico", "femenino"] },
+  { id: 15, nombre: "Aretes Estrella Marfil", categoria: "Eventos y Noche", precio: "$50.000", descripcion: "Doble flor geométrica en tono marfil y bordes dorados con centro perlado.", tags: ["estrella", "marfil", "beige", "crema", "dorado", "perla", "boda", "grado", "gala", "noche"] },
+  { id: 16, nombre: "Aretes Trío Tropical", categoria: "Eventos y Noche", precio: "$55.000", descripcion: "Tres flores escalonadas en amarillo, rosa y turquesa con topo de hoja dorada.", tags: ["trio", "tropical", "amarillo", "rosa", "turquesa", "flores", "llamativo", "fiesta", "largo"] },
+  { id: 17, nombre: "Aretes Flor Turquesa", categoria: "Eventos y Noche", precio: "$48.000", descripcion: "Flor volumétrica en tono turquesa con flecos y puntas naranja.", tags: ["turquesa", "azul", "verde", "naranja", "flor", "flecos", "negro", "blanco", "noche"] },
+  { id: 18, nombre: "Aretes Pétalos Contraste", categoria: "Clásicos", precio: "$42.000", descripcion: "Flor tejida en blanco y negro con elegante bastón superior dorado.", tags: ["petalos", "contraste", "blanco", "negro", "dorado", "formal", "oficina", "clasico"] },
+  { id: 19, nombre: "Aretes Cayena Naranja", categoria: "Uso Diario", precio: "$40.000", descripcion: "Flor tropical en naranja intenso con pistilos dorados hechos a mano.", tags: ["cayena", "naranja", "tropical", "flor", "dorado", "diario", "fresco"] },
+  { id: 20, nombre: "Aretes Lirio Cristal", categoria: "Clásicos", precio: "$45.000", descripcion: "Diseño floral calado disponible en acabado plateado cristal o dorado.", tags: ["lirio", "cristal", "plateado", "plata", "dorado", "flor", "ligero", "clasico"] },
+  { id: 21, nombre: "Aretes Hoja Plateada", categoria: "Uso Diario", precio: "$38.000", descripcion: "Delicada hoja tejida en tonos plata brillante con detalle central dorado.", tags: ["hoja", "plateada", "plata", "plateado", "brillante", "diario", "comodo", "ligero"] },
+  { id: 22, nombre: "Aretes Flor Nocturna", categoria: "Eventos y Noche", precio: "$42.000", descripcion: "Elegante flor negra en mostacilla con centro dorado para looks de gala.", tags: ["nocturna", "negra", "negro", "flor", "dorado", "noche", "gala", "vestido"] },
+  { id: 23, nombre: "Aretes Hibisco Dorado", categoria: "Eventos y Noche", precio: "$50.000", descripcion: "Flor colgante amarilla con detalles dorados y perla central.", tags: ["hibisco", "amarilla", "amarillo", "dorado", "perla", "colgante", "noche", "especial"] },
+  { id: 24, nombre: "Aretes Flor Solar", categoria: "Uso Diario", precio: "$38.000", descripcion: "Flor mediana en amarillo vibrante con centro dorado ideal para el día.", tags: ["solar", "amarillo", "flor", "dorado", "alegre", "diario", "dia"] }
+];
 
-CATÁLOGO COMPLETO DE ANELPG BISUTERÍA:
-1. Arete Flor de oro ($45.000) - Mediano con detalles en azul marino, ideal para uso diario y oficina.
-2. Arete de perla negra ($40.000) - Largos con perlas negras y acabados dorados (estilizan rostro redondo y cuadrado; geniales para noche o gala).
-3. Aretes torbellino colorido ($35.000) - Medianos llenos de color, ideales para eventos de día, outfits neutros o looks alegres.
-4. Aretes Florares dorados ($30.000) - Diseño floral brillante y versátil, combinan con todo tipo de look.
-5. Aretes vitrales ($35.000) - Pequeños con acabado artístico tipo vitral clásico, perfectos para un toque delicado y original.
-6. Aretes girasol ($45.000) - Pequeños, cómodos y femeninos, ideales para regalo o uso diario.
-7. Aretes Atardecer ($50.000) - Diseño llamativo y sofisticado para destacar en fiestas, cenas o eventos de noche.
-8. Aretes Medialuna ($20.000) - Pequeños y minimalistas en forma de media luna (los más económicos del catálogo).
-9. Aretes Silvestres ($25.000) - Inspirados en pétalos naturales, ligeros y románticos.
-10. Aretes Perla Colgante ($55.000) - Clásicos largos con acabado dorado (nuestra pieza premium, ideal para novias, grados, rostro redondo y eventos formales).
-11. Aretes Hamaca ($40.000) - Clásicos con movimiento elegante para ocasiones especiales.
-12. Aretes Atrapasueños Azul ($48.000) - Tejidos largos con flecos en degradé azul y negro, ideales para rostro redondo y eventos especiales.
-13. Aretes Cascada Coral ($52.000) - Largos florales en blanco, rosa pastel y coral, perfectos para fiestas de día o vestidos neutros.
-14. Aretes Orquídea Blanca ($45.000) - Diseño floral clásico blanco con bordes fucsia, muy femenino y versátil.
-15. Aretes Estrella Marfil ($50.000) - Doble flor larga en tono marfil y dorado, espectacular para bodas, grados o gala.
-16. Aretes Trío Tropical ($55.000) - Tres flores en amarillo, rosa y turquesa con hoja dorada, llamativos y alegres.
-17. Aretes Flor Turquesa ($48.000) - Flor grande turquesa con flecos y puntas naranja, ideal para resaltar outfits blancos o negros.
-18. Aretes Pétalos Contraste ($42.000) - Flor blanco y negro con pieza superior dorada, súper combinable con ropa oscura o formal.
-19. Aretes Cayena Naranja ($40.000) - Flor naranja vibrante con pistilos dorados, fresca y ligera para uso diario.
-20. Aretes Lirio Cristal ($45.000) - Flor calada ligera disponible en plateado cristal o dorado.
-21. Aretes Hoja Plateada ($38.000) - Hoja brillante plateada con centro dorado, cómoda y elegante para el día a día.
-22. Aretes Flor Nocturna ($42.000) - Flor negra con centro dorado, ideal para vestidos de noche y ocasiones formales.
-23. Aretes Hibisco Dorado ($50.000) - Flor colgante amarilla con centro de perla, perfecta para eventos especiales.
-24. Aretes Flor Solar ($38.000) - Flor mediana amarilla con centro dorado, alegre y cómoda para uso diario.
+const LISTA_CATALOGO_PROMPT = CATALOGO.map(
+  (p) => `${p.id}. ${p.nombre} (${p.precio}) [${p.categoria}] - ${p.descripcion}`
+).join('\n');
+
+const PROMPT_BASE = `Eres la Stylist IA y asesora experta en imagen de la tienda colombiana "Anelpg Bisutería", especializada en 24 diseños únicos de aretes artesanales hechos a mano en mostacilla y tejidos tradicionales.
+
+CATÁLOGO COMPLETO DE 24 REFERENCIAS DE ANELPG BISUTERÍA:
+${LISTA_CATALOGO_PROMPT}
 
 INFORMACIÓN DE LA TIENDA:
 - Acabados disponibles: Dorado y plateado en la mayoría de referencias.
-- Materiales: Herrajes en acero inoxidable hipoalergénico y bisutería fina artesanal.
+- Materiales: Mostacilla checa de alta calidad, herrajes en acero inoxidable hipoalergénico y tejidos artesanales.
 - Modalidades de venta: Por unidad (al detal) y al por mayor (desde 6 pares surtidos con precio especial).
 - Envíos: Envíos a toda Colombia y entregas rápidas en Bogotá.
 - Personalización: Se pueden solicitar combinaciones de colores bajo pedido.
 
 REGLAS DE CONVERSACIÓN:
 - Habla cálido, dulce, cercano y profesional, usando emojis con buen gusto (✨, 💖, 🌸, 🌙, 💫).
-- Responde de forma concisa y natural (3 a 5 líneas máximo), recomendando siempre 1 o 2 aretes exactos con su precio.
-- Adapta tu consejo al tipo de rostro, color de ropa, tono de piel, ocasión o presupuesto que mencione el cliente.
-- Si muestran intención de compra, regalo, cotización o pedido al por mayor, pídeles su nombre y diles que hagan clic en el botón de WhatsApp para finalizar el pedido.`;
+- Responde de forma concisa y natural (3 a 5 líneas máximo), recomendando siempre 2 o 3 aretes exactos de los 24 disponibles con su precio.
+- Adapta tu consejo al tipo de rostro, color de ropa, ocasión o presupuesto que mencione el cliente.
+- Si muestran intención de compra, regalo, cotización o pedido al por mayor, pídeles su nombre y diles que hagan clic en el botón verde de WhatsApp o los agreguen al carrito.`;
 
-// Función auxiliar para elegir respuestas variadas
 function elegirAzar(lista) {
   return lista[Math.floor(Math.random() * lista.length)];
 }
 
-// Motor de respaldo súper completo con +16 intenciones y respuestas variadas
+function normalizar(texto) {
+  return String(texto || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+// ================= MOTOR DE RESPALDO INTELIGENTE (24 ARETES) =================
 function respuestaRespaldo(msg) {
-  const t = msg.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const t = normalizar(msg);
 
   // 1. Saludos
   if (/^(hola|holi|buenas|hey|que tal|saludos|buen dia|buenas tardes|buenas noches)/.test(t)) {
     return elegirAzar([
-      "¡Hola! Qué alegría tenerte en Anelpg Bisutería 💖 Cuéntame, ¿buscas aretes para una ocasión especial, para regalar o según tu tipo de rostro? ✨",
-      "¡Holi! Bienvenida a Anelpg Bisutería 🌸 Soy tu Stylist IA. Dime qué outfit vas a usar o qué estilo te gusta y te recomiendo el par ideal 💫",
-      "¡Hola, hermosa! ✨ Qué gusto saludarte. Tenemos 11 diseños artesanales listos para iluminar tu look. ¿Prefieres aretes pequeños, medianos o largos? 💖"
+      "¡Hola! Qué alegría tenerte en Anelpg Bisutería 💖 Tenemos 24 diseños artesanales hechos a mano. Cuéntame, ¿buscas aretes para una ocasión especial, un color en particular o según tu tipo de rostro? ✨",
+      "¡Holi! Bienvenida a Anelpg Bisutería 🌸 Soy tu Stylist IA y conozco nuestras 24 referencias al detalle. Dime qué outfit vas a usar o qué estilo te gusta y te recomiendo el par ideal 💫"
     ]);
   }
 
   // 2. Despedidas y agradecimientos
   if (/(gracias|mil gracias|muchas gracias|te agradezco|listo|vale|ok|perfecto|genial)/.test(t) && t.length < 35) {
     return elegirAzar([
-      "¡Con todo el cariño del mundo! 💖 Si te decides por algún diseño, toca el botón de WhatsApp y lo preparamos para ti ✨",
-      "¡A ti por visitar Anelpg Bisutería! 🌸 Aquí sigo por si quieres combinar otro outfit o cotizar varios pares 💫",
-      "¡Me encanta ayudarte! ✨ Recuerda que puedes pedir directo por WhatsApp con tu nombre y el diseño que más te enamoró 💖"
+      "¡Con todo el cariño del mundo! 💖 Si ya elegiste tus favoritos, agrégalos al carrito o toca el botón de WhatsApp y los preparamos para ti ✨",
+      "¡A ti por visitar Anelpg Bisutería! 🌸 Aquí sigo por si quieres combinar otro outfit o preguntar por cualquiera de los 24 diseños 💫"
     ]);
   }
-  if (/(adios|chao|bye|hasta luego|nos vemos)/.test(t)) {
-    return "¡Hasta pronto! 💖 Gracias por pasar por Anelpg Bisutería. Cuando quieras estrenar aretes artesanales, aquí te espero ✨🌸";
+
+  // 3. Búsqueda directa entre los 24 aretes por palabras clave (colores, nombres, estilos)
+  const stopWords = new Set(['para', 'unos', 'unas', 'arete', 'aretes', 'tienen', 'busco', 'quiero', 'cuales', 'como', 'mejor', 'algo', 'con', 'los', 'las', 'una', 'que', 'me', 'quedan', 'combinan']);
+  const tokens = t.split(/[^a-z0-9]+/).filter((w) => w.length > 2 && !stopWords.has(w));
+
+  if (tokens.length > 0) {
+    const puntuados = CATALOGO.map((prod) => {
+      const textoProd = normalizar(`${prod.nombre} ${prod.categoria} ${prod.descripcion} ${prod.tags.join(' ')}`);
+      let puntos = 0;
+      tokens.forEach((tok) => {
+        if (textoProd.includes(tok)) puntos += 2;
+        if (normalizar(prod.nombre).includes(tok)) puntos += 3;
+      });
+      return { prod, puntos };
+    }).filter((x) => x.puntos > 0).sort((a, b) => b.puntos - a.puntos);
+
+    if (puntuados.length > 0) {
+      const top = puntuados.slice(0, 3).map((x) => `• ${x.prod.nombre} (${x.prod.precio}): ${x.prod.descripcion}`).join('\n');
+      return `¡Mira estas joyas de nuestra colección de 24 diseños que van perfecto con lo que buscas! ✨\n\n${top}\n\n¿Te gustaría agregar alguno al carrito o pedirlo por WhatsApp? 💖`;
+    }
   }
 
-  // 3. Tipos de rostro (redondo, alargado, cuadrado, ovalado, corazón)
+  // 4. Tipos de rostro
   if (t.includes("redondo")) {
-    return elegirAzar([
-      "Para rostro redondo te estilizan muchísimo los diseños largos y verticales como el Arete de perla negra ($40.000) o los Aretes Perla Colgante ($55.000) ✨ ¿Te gustan más en dorado o plateado? 💖",
-      "Si tienes rostro redondo, alargar visualmente tus facciones es clave 💫 Te van divinos los Aretes Perla Colgante ($55.000) o el Arete de perla negra ($40.000). ¿Quieres pedir alguno por WhatsApp? 🌸"
-    ]);
+    return "Para rostro redondo te estilizan muchísimo los diseños largos y verticales como Aretes Atrapasueños Azul ($48.000), Aretes Cascada Coral ($52.000) o Aretes Perla Colgante ($55.000) ✨ ¿Qué tonos prefieres? 💖";
   }
-  if (t.includes("alargado") || t.includes("largo") && t.includes("rostro") || t.includes("delgado")) {
-    return "Para rostro alargado te favorecen mucho los diseños cortos o medianos con volumen lateral, como los Aretes girasol ($45.000), los Aretes vitrales ($35.000) o los Aretes torbellino colorido ($35.000) 🌸 Armonizan súper lindo 💖";
-  }
-  if (t.includes("cuadrado") || t.includes("angular")) {
-    return "Para suavizar las líneas de un rostro cuadrado, las formas curvas y orgánicas son mágicas ✨ Te recomiendo los Aretes Medialuna ($20.000), los Aretes Silvestres ($25.000) o el Arete de perla negra ($40.000) 💖";
-  }
-  if (t.includes("ovalado") || t.includes("corazon") || t.includes("triangulo")) {
-    return "¡Tienes un rostro súper versátil! 💫 Para equilibrar la parte inferior te lucen divinos los Aretes Hamaca ($40.000), los Aretes Florares dorados ($30.000) o el Arete Flor de oro ($45.000) 🌸 ¿Cuál va más con tu estilo?";
+  if (t.includes("alargado") || t.includes("cuadrado")) {
+    return "Para equilibrar tus facciones te lucen divinos diseños con volumen floral o curvas suaves como Aretes Flor Turquesa ($48.000), Aretes girasol ($45.000) o Aretes Medialuna ($20.000) 🌸💖";
   }
 
-  // 4. Ocasiones: Noche, fiesta, boda, grado, elegante
-  if (/(noche|fiesta|gala|boda|matrimonio|grado|graduacion|cena|elegante|formal)/.test(t)) {
-    return elegirAzar([
-      "Para brillar en un evento de noche te recomiendo nuestros favoritos de gala: los Aretes Atardecer ($50.000) o los Aretes Perla Colgante ($55.000) ✨ Son sofisticados y roban miradas 💖",
-      "Si es una ocasión elegante o fiesta nocturna, los Aretes Hamaca ($40.000) y el Arete de perla negra ($40.000) elevan cualquier vestido al instante 🌙✨ ¿Te gustaría cotizarlos por WhatsApp?"
-    ]);
+  // 5. Mayoristas, materiales, envíos, precios
+  if (/(mayor|mayorista|docena|revender|negocio)/.test(t)) {
+    return "¡Sí manejamos ventas al por mayor en Anelpg Bisutería! 🌸 A partir de 6 pares surtidos entre nuestros 24 diseños tienes tarifa especial. Déjame tu nombre y escríbenos por WhatsApp para enviarte el catálogo mayorista 💖✨";
+  }
+  if (/(material|acero|alergia|cuidado|cuidar|mojar|perfume)/.test(t)) {
+    return "Tejemos a mano con mostacilla checa de alta calidad y herrajes en acero inoxidable hipoalergénico 🌸 Evita aplicarles perfume directo y guárdalos en su bolsita para que brillen por años ✨💖";
+  }
+  if (/(envio|envios|domicilio|bogota|colombia|pago|nequi|daviplata)/.test(t)) {
+    return "Hacemos envíos seguros a toda Colombia y entregas rápidas en Bogotá 🚚✨ Aceptamos Nequi, Daviplata y transferencia bancaria. Toca el botón de WhatsApp con tu ciudad para coordinar tu pedido 💖";
+  }
+  if (/(precio|precios|barato|economico|catalogo|todos|cuantos)/.test(t)) {
+    return "Tenemos 24 referencias artesanales desde $20.000 (Aretes Medialuna) y $25.000 (Aretes Silvestres), hasta ediciones especiales de $55.000 como Aretes Trío Tropical y Perla Colgante ✨💖 ¿Cuál te llamó más la atención?";
+  }
+  if (/(comprar|pedido|pedir|quiero|encargar|whatsapp)/.test(t)) {
+    return "¡Qué emoción! 💖 Para tomar tu pedido en Anelpg Bisutería, dime tu nombre y qué diseño deseas, o haz clic directo en el botón verde de WhatsApp para atenderte de inmediato ✨🌸";
   }
 
-  // 5. Ocasiones: Diario, universidad, oficina, casual, día
-  if (/(diario|casual|oficina|universidad|trabajo|dia|sencillo|comodo|comodos|pequeno|pequenos)/.test(t)) {
-    return elegirAzar([
-      "Para uso diario, universidad u oficina necesitas comodidad y estilo ✨ Te van perfectos los Aretes Medialuna ($20.000), los Aretes girasol ($45.000) o el Arete Flor de oro ($45.000) 🌸",
-      "Si buscas algo ligero y lindo para todos los días, mira los Aretes Silvestres ($25.000) o los Aretes vitrales ($35.000) 💫 No pesan nada y combinan con todo 💖"
-    ]);
-  }
-
-  // 6. Colores de ropa / Outfits
-  if (/(negro|oscuro|vino|vinotinto)/.test(t)) {
-    return "Con ropa negra o tonos oscuros el contraste dorado se ve espectacular ✨ Te recomiendo los Aretes Florares dorados ($30.000), los Aretes Atardecer ($50.000) o si quieres un toque de color, los Aretes torbellino colorido ($35.000) 💖";
-  }
-  if (/(blanco|beige|crema|neutro|pastel)/.test(t)) {
-    return "Con prendas blancas, beige o tonos neutros lucen increíbles el Arete Flor de oro ($45.000) con sus detalles azul marino, el Arete de perla negra ($40.000) o los Aretes torbellino colorido ($35.000) 🌸✨";
-  }
-  if (/(azul|verde|rojo|rosa|rosado|morado|amarillo|estampado|flores)/.test(t)) {
-    return "Cuando llevas prendas de color o estampadas, lo ideal es equilibrar con tonos dorados o perlas 💫 Te sugiero los Aretes Perla Colgante ($55.000), los Aretes Medialuna ($20.000) o los Aretes Hamaca ($40.000) 💖";
-  }
-
-  // 7. Regalos
-  if (/(regalo|regalar|cumpleanos|aniversario|mama|novia|amiga|sorpresa|detalle)/.test(t)) {
-    return "¡Un par de aretes artesanales es un regalo inolvidable! 🎁💖 Los más pedidos para regalar son los Aretes girasol ($45.000), los Aretes Silvestres ($25.000) y los Aretes Perla Colgante ($55.000). Dime tu nombre y los preparamos por WhatsApp ✨";
-  }
-
-  // 8. Precios, económicos, presupuesto, catálogo
-  if (/(precio|precios|cuanto vale|cuanto cuestan|barato|economico|presupuesto|catalogo|lista|todos)/.test(t)) {
-    return "Nuestros precios van desde $20.000 hasta $55.000 💖 Los más económicos son Aretes Medialuna ($20.000), Silvestres ($25.000) y Florares dorados ($30.000); y los premium son Atardecer ($50.000) y Perla Colgante ($55.000) ✨ ¿Cuál te llamó más la atención?";
-  }
-
-  // 9. Mayoristas / Negocio / Emprender
-  if (/(mayor|mayorista|docena|revender|negocio|cantidad|descuento|promocion)/.test(t)) {
-    return "¡Sí manejamos ventas al por mayor en Anelpg Bisutería! 🌸 A partir de 6 pares surtidos tienes tarifa especial de distribuidora. Déjame tu nombre y escríbenos por WhatsApp para enviarte la tabla de precios mayoristas 💖✨";
-  }
-
-  // 10. Materiales, alergias, cuidado
-  if (/(material|materiales|acero|oro|plata|alergia|irritacion|cuidado|cuidar|mojar|perfume|duran|duracion)/.test(t)) {
-    return "Trabajamos con herrajes en acero inoxidable hipoalergénico y bisutería fina artesanal 🌸 Para que brillen por años, evita aplicarles perfume directo, no te bañes con ellos y guárdalos en su bolsita individual ✨ ¿Te gustaría pedir algún par? 💖";
-  }
-
-  // 11. Envíos, entregas, pagos, ubicación
-  if (/(envio|envios|domicilio|bogota|colombia|ciudad|pago|nequi|daviplata|transferencia|contraentrega|donde estan|ubicacion)/.test(t)) {
-    return "Hacemos envíos seguros a toda Colombia y entregas rápidas en Bogotá 🚚✨ Aceptamos Nequi, Daviplata y transferencia bancaria. Toca el botón de WhatsApp con tu ciudad y el arete que elegiste para coordinar tu envío 💖";
-  }
-
-  // 12. Personalizados / Colores / Acabados
-  if (/(personalizado|personalizar|otro color|dorado|plateado|medida|tamano)/.test(t)) {
-    return "¡Claro que sí! 💫 La mayoría de nuestros diseños se pueden pedir en acabado dorado o plateado, y hacemos combinaciones de colores personalizadas bajo pedido 🎨 Escríbenos por WhatsApp con tu idea y la hacemos realidad 💖";
-  }
-
-  // 13. Intención directa de compra / pedido
-  if (/(comprar|pedido|pedir|quiero|me interesa|encargar|disponible|disponibles|whatsapp)/.test(t)) {
-    return "¡Qué emoción! 💖 Para tomar tu pedido en Anelpg Bisutería, cuéntame tu nombre y qué diseño deseas, o haz clic directo en el botón verde de WhatsApp aquí abajo para atenderte de inmediato ✨🌸";
-  }
-
-  // 14. Respuesta comodín inteligente (si escribe algo muy específico)
+  // 6. Comodín con variedad de los 24 diseños
   return elegirAzar([
-    "¡Me encantaría asesorarte en Anelpg Bisutería! ✨ Cuéntame un poquito más: ¿buscas algo sutil como los Aretes Medialuna ($20.000), floral como los Girasol ($45.000) o elegante como los Atardecer ($50.000)? 💖",
-    "¡Qué buena consulta! 🌸 En Anelpg Bisutería hacemos cada par a mano pensando en tu estilo. Si me dices para qué ocasión los buscas o qué colores sueles usar, te doy mi recomendación exacta ✨💖",
-    "¡Estoy aquí para ayudarte a brillar! 💫 Puedes preguntarme por recomendaciones según tu rostro, combinaciones con tu ropa, ventas al por mayor o hacer tu pedido directo por WhatsApp 💖"
+    "¡Con gusto te asesoro! ✨ Entre nuestros 24 diseños hechos a mano destacan Aretes Atrapasueños Azul ($48.000), Aretes Orquídea Blanca ($45.000) y Aretes Flor Solar ($38.000). Dime un color, evento o estilo y te doy mi recomendación exacta 💖",
+    "¡Estoy aquí para ayudarte a brillar! 💫 Puedes preguntarme por cualquiera de nuestras 24 referencias, combinaciones con tu vestido, ventas al por mayor o hacer tu pedido directo por WhatsApp 🌸💖"
   ]);
 }
 
-async function llamarGemini(modelo, mensajeUsuario) {
-  const respuesta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${GEMINI_KEY}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{
-        parts: [{ text: `${PROMPT_BASE}\n\nEl cliente dice: ${mensajeUsuario}` }]
-      }]
-    })
-  });
+// ================= LLAMADA A GEMINI CON MEMORIA DE CONVERSACIÓN =================
+async function llamarGemini(modelo, mensajeUsuario, historial = []) {
+  const contextoHistorial = Array.isArray(historial) && historial.length > 0
+    ? historial
+        .slice(-6)
+        .map((m) => `${m.autor === 'ia' ? 'Stylist IA' : 'Cliente'}: ${m.texto}`)
+        .join('\n')
+    : '';
+
+  const promptCompleto = `${PROMPT_BASE}
+
+${contextoHistorial ? `HISTORIAL RECIENTE DE LA CONVERSACIÓN:\n${contextoHistorial}\n` : ''}Cliente ahora dice: ${mensajeUsuario}
+Stylist IA:`;
+
+  const respuesta = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${GEMINI_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: promptCompleto }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 280
+        }
+      })
+    }
+  );
+
   const datos = await respuesta.json();
   if (!respuesta.ok) {
     console.error(`Error Gemini (${modelo}):`, JSON.stringify(datos));
@@ -187,16 +182,20 @@ async function llamarGemini(modelo, mensajeUsuario) {
 
 app.post('/chat', async (req, res) => {
   const mensajeUsuario = req.body.mensaje || "Hola";
+  const historial = req.body.historial || [];
+
   if (!GEMINI_KEY) {
     return res.json({ respuesta: respuestaRespaldo(mensajeUsuario) });
   }
+
   try {
-    let textoIA = await llamarGemini('gemini-2.5-flash', mensajeUsuario);
+    let textoIA = await llamarGemini('gemini-2.5-flash', mensajeUsuario, historial);
     if (!textoIA) {
-      textoIA = await llamarGemini('gemini-2.5-flash-lite', mensajeUsuario);
+      textoIA = await llamarGemini('gemini-2.5-flash-lite', mensajeUsuario, historial);
     }
     res.json({ respuesta: textoIA || respuestaRespaldo(mensajeUsuario) });
   } catch (e) {
+    console.error('Fallo general en /chat:', e.message);
     res.json({ respuesta: respuestaRespaldo(mensajeUsuario) });
   }
 });

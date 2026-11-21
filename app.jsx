@@ -59,8 +59,15 @@ function obtenerRespuestaLocalIA(pregunta) {
   return 'Ay, me quedé dormida un momentico despertando el servidor en Render 😅 Pero te recomiendo los Aretes Flor de oro ($45.000) para el día o los Aretes Estrella Marfil ($50.000) para gala. ¡Escríbenos por WhatsApp para pedir!';
 }
 
-// ================= COMPONENTE: PANTALLA DE CARGA ORIGINAL =================
+// ================= COMPONENTE: PANTALLA DE CARGA FLUIDA =================
 function PantallaCarga({ oculta }) {
+  const [progreso, setProgreso] = useState(0);
+
+  useEffect(() => {
+    const inicio = setTimeout(() => setProgreso(100), 50);
+    return () => clearTimeout(inicio);
+  }, []);
+
   return (
     <div id="pantallaCarga" className={`pantalla-carga ${oculta ? 'oculta' : ''}`}>
       <div className="contenido-carga" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -81,10 +88,10 @@ function PantallaCarga({ oculta }) {
             className="barra-carga-progreso"
             style={{
               height: '100%',
-              width: oculta ? '100%' : '85%',
+              width: `${progreso}%`,
               background: 'linear-gradient(90deg, #e89ca8, #c59b5f)',
               borderRadius: '10px',
-              transition: 'width 1.6s ease-out'
+              transition: 'width 1.6s cubic-bezier(0.22, 1, 0.36, 1)'
             }}
           />
         </div>
@@ -92,7 +99,6 @@ function PantallaCarga({ oculta }) {
     </div>
   );
 }
-
 // ================= COMPONENTE: BARRA DE NAVEGACIÓN =================
 function Navbar({ totalItemsCarrito, onAbrirCarrito, onAbrirCuenta, usuarioActivo }) {
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -212,7 +218,7 @@ function StylistIA() {
       const res = await fetch(URL_BACKEND_CHAT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mensaje: limpio })
+        body: JSON.stringify({ mensaje: limpio, historial: mensajes })
       });
       if (!res.ok) throw new Error('Error en servidor');
       const datos = await res.json();
