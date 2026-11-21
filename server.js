@@ -1,43 +1,46 @@
-// Chatbot Anelpg con Gemini - hecho por Ana Prieto
-const form = document.getElementById('formChat');
-const input = document.getElementById('inputChat');
-const mensajesDiv = document.getElementById('chatMensajes');
+const express = require('express');
+const cors = require('cors');
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-// Tu backend ya en Live
-const URL_BACKEND = "https://proyecto-final-bvf1.onrender.com/chat";
-const numeroWhatsApp = "573212289682";
+const GEMINI_KEY = process.env.GEMINI_API_KEY;
 
-function mostrarMensaje(texto, esIA) {
-  let clase = esIA ? "mensaje mensaje-ia" : "mensaje mensaje-usuario";
-  mensajesDiv.innerHTML += `<div class="${clase}">${texto}</div>`;
-  mensajesDiv.scrollTop = mensajesDiv.scrollHeight;
-}
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  let texto = input.value.trim();
-  if (texto == "") return;
-
-  mostrarMensaje(texto, false);
-  input.value = "";
-  mostrarMensaje("Estoy pensando tu look... ✨", true);
-
+app.post('/chat', async (req, res) => {
+  const mensajeUsuario = req.body.mensaje || "Hola";
   try {
-    let res = await fetch(URL_BACKEND, {
+    const respuesta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mensaje: texto })
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `Eres la Stylist IA y asesora virtual de la tienda "Anelpg Bisutería", especializada en aretes artesanales hechos a mano.
+Catálogo actual:
+- Arete Flor de oro ($45.000): mediano con detalles en azul marino, ideal uso diario.
+- Arete de perla negra ($40.000): largos con perlas negras y acabados dorados (ideales para rostro redondo).
+- Aretes torbellino colorido ($35.000): medianos coloridos para eventos.
+- Aretes Florares dorados ($30.000): brillantes de flores, versátiles.
+- Aretes vitrales ($35.000): pequeños estilo vitral clásico.
+- Aretes girasol ($45.000): pequeños, cómodos y sutiles.
+- Aretes Atardecer ($50.000): elegantes para destacar en fiestas o noche.
+- Aretes Medialuna ($20.000): pequeños en forma de media luna.
+- Aretes Silvestres ($25.000): pétalos naturales delicados.
+- Aretes Perla Colgante ($55.000): clásicos largos con acabado dorado (ideales para rostro redondo).
+- Aretes Hamaca ($40.000): clásicos para ocasiones especiales.
+
+Hablas dulce, amable y con emojis (✨, 💖, 🌸). Ayudas a elegir aretes según rostro u ocasión, vendes por unidad y al por mayor (desde 6 pares con descuento). Materiales: acero inoxidable y bisutería fina. Responde corto (máximo 3-4 líneas). Si quieren hacer pedido, pídeles su nombre y diles que hagan clic en el botón de WhatsApp. El cliente dice: ${mensajeUsuario}`
+          }]
+        }]
+      })
     });
-    let datos = await res.json();
-
-    mensajesDiv.lastChild.remove();
-    mostrarMensaje(datos.respuesta, true);
-
-    if (datos.respuesta.toLowerCase().includes("whatsapp") || datos.respuesta.toLowerCase().includes("nombre")) {
-      mensajesDiv.innerHTML += `<a href="https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent("Hola Anais, vengo de tu página y quiero hacer un pedido")}" target="_blank" style="display:block; text-align:center; margin:10px; padding:10px; background:#25D366; color:white; text-decoration:none; border-radius:20px;">Ir a WhatsApp y hacer mi pedido 💖</a>`;
-    }
-  } catch (error) {
-    mensajesDiv.lastChild.remove();
-    mostrarMensaje("Ay, me quedé dormida un momentico, es que soy gratis en Render 😅 ¿Me repites tu pregunta?", true);
+    const datos = await respuesta.json();
+    const textoIA = datos.candidates?.[0]?.content?.parts?.[0]?.text || "Ay, no te escuché bien, ¿me repites? 💖";
+    res.json({ respuesta: textoIA });
+  } catch (e) {
+    res.json({ respuesta: "Ay, me dormí un momentico 😅 ¿Me repites tu pregunta?" });
   }
 });
+
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log("Anelpg Bisutería lista en puerto " + PORT));
