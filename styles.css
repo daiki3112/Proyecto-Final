@@ -757,3 +757,125 @@ footer {
 .btn-enviar-chat:hover {
   background-color: #a6713e;
 }
+/* Sección Club VIP y Canal de WhatsApp */
+.caja-vip {
+  background-color: #fffdf9;
+  border: 1px solid #e6dccf;
+  border-radius: 20px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(61, 46, 36, 0.06);
+}
+
+.botones-vip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-whatsapp-canal {
+  display: inline-block;
+  background-color: #25D366;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.9rem 1.6rem;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-whatsapp-canal:hover {
+  background-color: #1ebe5d;
+  transform: translateY(-2px);
+}
+/* ================= PANTALLA DE CARGA (INTRO) ================= */
+.pantalla-carga {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, #fdf9f4 0%, #f5ebe0 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.7s ease, visibility 0.7s ease;
+}
+
+.pantalla-carga.oculta {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.contenido-carga {
+  text-align: center;
+  padding: 20px;
+  animation: aparecerLogo 0.9s ease-out;
+}
+
+.logo-carga {
+  width: 210px;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #d4af37;
+  box-shadow: 0 12px 30px rgba(180, 140, 80, 0.22);
+  margin-bottom: 16px;
+}
+
+.texto-carga {
+  font-family: 'Playfair Display', serif;
+  color: #5c4332;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+}
+
+.barra-carga {
+  width: 200px;
+  height: 5px;
+  background-color: #e6d7c3;
+  border-radius: 10px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.progreso-carga {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #e5989b, #c89d54);
+  border-radius: 10px;
+  animation: llenarBarra 1.8s ease-in-out forwards;
+}
+
+@keyframes aparecerLogo {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes llenarBarra {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* Logo miniatura en la barra de navegación */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-nav {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #c89d54;
+}

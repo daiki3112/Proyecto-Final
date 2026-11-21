@@ -8,12 +8,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/jpeg" href="img/Logo.jpeg">
 </head>
 <body>
 
+<!-- Pantalla de Carga / Introducción -->
+  <div class="pantalla-carga" id="pantallaCarga">
+    <div class="contenido-carga">
+      <img src="img/Logo.jpeg" alt="Anelpg Artesanía Hecho a Mano" class="logo-carga">
+      <p class="texto-carga">Anelpg Bisutería · Artesanía Hecho a Mano</p>
+      <div class="barra-carga">
+        <div class="progreso-carga"></div>
+      </div>
+    </div>
+  </div>
+
   <header class="navbar">
     <div class="contenedor nav-contenido">
-      <a href="#inicio" class="logo">Anelpg Bisutería</a>
+     <a href="#inicio" class="logo">
+        <img src="img/Logo.jpeg" alt="Logo Anelpg" class="logo-nav">
+        <span>Anelpg Bisutería</span>
+      </a>
       <button class="btn-menu" id="btnMenu" aria-label="Abrir menu">☰</button>
       <nav class="nav-links" id="navLinks">
         <a href="#inicio">Inicio</a>
@@ -78,10 +93,24 @@
       </div>
     </section>
 
-    <section id="contacto" class="seccion">
+    <<section id="comunidad" class="seccion">
       <div class="contenedor">
-        <h2>Haz tu Pedido o Escríbenos</h2>
-        <p class="subtitulo-seccion">¿Te gustó algún diseño o quieres un par personalizado? Déjanos tus datos y te respondemos pronto.</p>
+        <div class="caja-vip">
+          <span class="etiqueta">Comunidad Anelpg</span>
+          <h2>¿Quieres recibir ofertas y el catálogo nuevo?</h2>
+          <p class="subtitulo-seccion">Únete a nuestro Club VIP para enterarte primero de nuevos diseños artesanales, descuentos especiales y precios al por mayor.</p>
+          
+          <div class="botones-vip">
+            <a href="PEGA_AQUI_TU_LINK_DE_GOOGLE_FORM" target="_blank" class="btn-principal">
+              ✨ Quiero recibir ofertas (Registro)
+            </a>
+            <a href="https://whatsapp.com/channel/0029Vb9s5SgB4hdM1isDJ12N" target="_blank" class="btn-whatsapp-canal">
+              💬 Unirme al Canal de WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
         
         <div class="contenedor-contacto" id="contenedorContacto">
           <form class="form-contacto" id="formContacto">

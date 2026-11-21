@@ -346,3 +346,12 @@ listaAdminProductos.addEventListener('click', (e) => {
     }
   }
 });
+// Pantalla de carga / introducción
+window.addEventListener('load', () => {
+  const pantallaCarga = document.getElementById('pantallaCarga');
+  if (pantallaCarga) {
+    setTimeout(() => {
+      pantallaCarga.classList.add('oculta');
+    }, 1900);
+  }
+});
