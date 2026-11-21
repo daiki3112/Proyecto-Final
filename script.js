@@ -87,6 +87,110 @@ const productosIniciales = [
     descripcion: "Lindos y clasicos para ocasiones especiales.",
     imagen: "img/arete11.jpg"
   }
+{
+    id: 12,
+    nombre: "Aretes Atrapasueños Azul",
+    precio: "$48.000",
+    categoria: "noche",
+    imagen: "img/arete12.jpeg",
+    descripcion: "Tejidos a mano en degradé azul celeste, rey y negro con flecos largos."
+  },
+  {
+    id: 13,
+    nombre: "Aretes Cascada Coral",
+    precio: "$52.000",
+    categoria: "noche",
+    imagen: "img/arete13.jpeg",
+    descripcion: "Diseño floral largo en tonos blanco, rosa pastel y coral vibrante."
+  },
+  {
+    id: 14,
+    nombre: "Aretes Orquídea Blanca",
+    precio: "$45.000",
+    categoria: "clasicos",
+    imagen: "img/arete14.jpeg",
+    descripcion: "Orquídea artesanal blanca con bordes fucsia y centro amarillo."
+  },
+  {
+    id: 15,
+    nombre: "Aretes Estrella Marfil",
+    precio: "$50.000",
+    categoria: "noche",
+    imagen: "img/arete15.jpeg",
+    descripcion: "Doble flor geométrica en tono marfil y bordes dorados con centro perlado."
+  },
+  {
+    id: 16,
+    nombre: "Aretes Trío Tropical",
+    precio: "$55.000",
+    categoria: "noche",
+    imagen: "img/arete16.jpeg",
+    descripcion: "Tres flores escalonadas en amarillo, rosa y turquesa con topo de hoja dorada."
+  },
+  {
+    id: 17,
+    nombre: "Aretes Flor Turquesa",
+    precio: "$48.000",
+    categoria: "noche",
+    imagen: "img/arete17.jpeg",
+    descripcion: "Flor volumétrica en tono turquesa con flecos y puntas naranja."
+  },
+  {
+    id: 18,
+    nombre: "Aretes Pétalos Contraste",
+    precio: "$42.000",
+    categoria: "clasicos",
+    imagen: "img/arete18.jpeg",
+    descripcion: "Flor tejida en blanco y negro con elegante bastón superior dorado."
+  },
+  {
+    id: 19,
+    nombre: "Aretes Cayena Naranja",
+    precio: "$40.000",
+    categoria: "diario",
+    imagen: "img/arete19.jpeg",
+    descripcion: "Flor tropical en naranja intenso con pistilos dorados hechos a mano."
+  },
+  {
+    id: 20,
+    nombre: "Aretes Lirio Cristal",
+    precio: "$45.000",
+    categoria: "clasicos",
+    imagen: "img/arete20.jpeg",
+    descripcion: "Diseño floral calado disponible en acabado plateado cristal o dorado."
+  },
+  {
+    id: 21,
+    nombre: "Aretes Hoja Plateada",
+    precio: "$38.000",
+    categoria: "diario",
+    imagen: "img/arete21.jpeg",
+    descripcion: "Delicada hoja tejida en tonos plata brillante con detalle central dorado."
+  },
+  {
+    id: 22,
+    nombre: "Aretes Flor Nocturna",
+    precio: "$42.000",
+    categoria: "noche",
+    imagen: "img/arete22.jpeg",
+    descripcion: "Elegante flor negra en mostacilla con centro dorado para looks de gala."
+  },
+  {
+    id: 23,
+    nombre: "Aretes Hibisco Dorado",
+    precio: "$50.000",
+    categoria: "noche",
+    imagen: "img/arete23.jpeg",
+    descripcion: "Flor colgante amarilla con detalles dorados y perla central."
+  },
+  {
+    id: 24,
+    nombre: "Aretes Flor Solar",
+    precio: "$38.000",
+    categoria: "diario",
+    imagen: "img/arete24.jpeg",
+    descripcion: "Flor mediana en amarillo vibrante con centro dorado ideal para el día."
+  }
 ];
 
 const gridProductos = document.getElementById('gridProductos');

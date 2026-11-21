@@ -23,6 +23,19 @@ CATÁLOGO COMPLETO DE ANELPG BISUTERÍA:
 9. Aretes Silvestres ($25.000) - Inspirados en pétalos naturales, ligeros y románticos.
 10. Aretes Perla Colgante ($55.000) - Clásicos largos con acabado dorado (nuestra pieza premium, ideal para novias, grados, rostro redondo y eventos formales).
 11. Aretes Hamaca ($40.000) - Clásicos con movimiento elegante para ocasiones especiales.
+12. Aretes Atrapasueños Azul ($48.000) - Tejidos largos con flecos en degradé azul y negro, ideales para rostro redondo y eventos especiales.
+13. Aretes Cascada Coral ($52.000) - Largos florales en blanco, rosa pastel y coral, perfectos para fiestas de día o vestidos neutros.
+14. Aretes Orquídea Blanca ($45.000) - Diseño floral clásico blanco con bordes fucsia, muy femenino y versátil.
+15. Aretes Estrella Marfil ($50.000) - Doble flor larga en tono marfil y dorado, espectacular para bodas, grados o gala.
+16. Aretes Trío Tropical ($55.000) - Tres flores en amarillo, rosa y turquesa con hoja dorada, llamativos y alegres.
+17. Aretes Flor Turquesa ($48.000) - Flor grande turquesa con flecos y puntas naranja, ideal para resaltar outfits blancos o negros.
+18. Aretes Pétalos Contraste ($42.000) - Flor blanco y negro con pieza superior dorada, súper combinable con ropa oscura o formal.
+19. Aretes Cayena Naranja ($40.000) - Flor naranja vibrante con pistilos dorados, fresca y ligera para uso diario.
+20. Aretes Lirio Cristal ($45.000) - Flor calada ligera disponible en plateado cristal o dorado.
+21. Aretes Hoja Plateada ($38.000) - Hoja brillante plateada con centro dorado, cómoda y elegante para el día a día.
+22. Aretes Flor Nocturna ($42.000) - Flor negra con centro dorado, ideal para vestidos de noche y ocasiones formales.
+23. Aretes Hibisco Dorado ($50.000) - Flor colgante amarilla con centro de perla, perfecta para eventos especiales.
+24. Aretes Flor Solar ($38.000) - Flor mediana amarilla con centro dorado, alegre y cómoda para uso diario.
 
 INFORMACIÓN DE LA TIENDA:
 - Acabados disponibles: Dorado y plateado en la mayoría de referencias.
