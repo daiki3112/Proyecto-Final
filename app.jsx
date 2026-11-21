@@ -59,6 +59,40 @@ function obtenerRespuestaLocalIA(pregunta) {
   return 'Ay, me quedé dormida un momentico despertando el servidor en Render 😅 Pero te recomiendo los Aretes Flor de oro ($45.000) para el día o los Aretes Estrella Marfil ($50.000) para gala. ¡Escríbenos por WhatsApp para pedir!';
 }
 
+// ================= COMPONENTE: PANTALLA DE CARGA ORIGINAL =================
+function PantallaCarga({ oculta }) {
+  return (
+    <div id="pantallaCarga" className={`pantalla-carga ${oculta ? 'oculta' : ''}`}>
+      <div className="contenido-carga" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <img src="img/Logo.jpeg" alt="Anelpg Bisutería" className="logo-carga" />
+        <p className="texto-carga">Anelpg Bisutería · Artesanía Hecha a Mano</p>
+        <div
+          className="barra-carga-fondo"
+          style={{
+            width: '220px',
+            height: '6px',
+            backgroundColor: '#eadfd5',
+            borderRadius: '10px',
+            overflow: 'hidden',
+            marginTop: '14px'
+          }}
+        >
+          <div
+            className="barra-carga-progreso"
+            style={{
+              height: '100%',
+              width: oculta ? '100%' : '85%',
+              background: 'linear-gradient(90deg, #e89ca8, #c59b5f)',
+              borderRadius: '10px',
+              transition: 'width 1.6s ease-out'
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ================= COMPONENTE: BARRA DE NAVEGACIÓN =================
 function Navbar({ totalItemsCarrito, onAbrirCarrito, onAbrirCuenta, usuarioActivo }) {
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -442,7 +476,7 @@ function CuentaModal({ abierto, onCerrar, usuarioActivo, onLogin, onRegistro, on
 
 // ================= COMPONENTE PRINCIPAL: APP =================
 function App() {
-  const [cargandoIntro, setCargandoIntro] = useState(true);
+  const [introOculta, setIntroOculta] = useState(false);
 
   const [productos, setProductos] = useState(() => {
     const guardados = JSON.parse(localStorage.getItem('anelpg_productos'));
@@ -461,7 +495,7 @@ function App() {
   const [contactoMensaje, setContactoMensaje] = useState('');
 
   useEffect(() => {
-    const timer = setTimeout(() => setCargandoIntro(false), 1600);
+    const timer = setTimeout(() => setIntroOculta(true), 1900);
     return () => clearTimeout(timer);
   }, []);
 
@@ -543,12 +577,7 @@ function App() {
 
   return (
     <>
-      {cargandoIntro && (
-        <div className="pantalla-carga">
-          <img src="img/Logo.jpeg" alt="Anelpg Bisutería" className="logo-carga" />
-          <p className="texto-carga">Anelpg Bisutería · Artesanía Hecha a Mano</p>
-        </div>
-      )}
+      <PantallaCarga oculta={introOculta} />
 
       <Navbar
         totalItemsCarrito={totalUnidades}
