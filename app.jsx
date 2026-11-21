@@ -1,4 +1,4 @@
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 const NUMERO_WHATSAPP = '573212289682';
 const URL_BACKEND_CHAT = 'https://proyecto-final-bvf1.onrender.com/chat';
@@ -192,23 +192,43 @@ function Catalogo({ productos, onAgregarCarrito }) {
 }
 
 // ================= COMPONENTE: STYLIST IA =================
-function StylistIA() {
-  const [mensajes, setMensajes] = useState([
-    { autor: 'ia', texto: '¡Hola! Soy la asesora virtual de Anelpg Bisutería. ¿Buscas aretes para una ocasión especial o según la forma de tu rostro?', mostrarBotonWA: false }
-  ]);
+function StylistIA({ productos }) {
+  const mensajeInicial = {
+    autor: 'ia',
+    texto: '¡Hola! Soy la asesora virtual de Anelpg Bisutería. Conozco nuestros 24 diseños hechos a mano: pregúntame por colores, ocasiones, precios o tipo de rostro ✨',
+    mostrarBotonWA: false
+  };
+
+  const [mensajes, setMensajes] = useState([mensajeInicial]);
   const [input, setInput] = useState('');
   const [cargando, setCargando] = useState(false);
+  const [charlaCerrada, setCharlaCerrada] = useState(false);
+
+  const cajaMensajesRef = useRef(null);
+
+  // Baja automáticamente al último mensaje cada vez que cambia el chat
+  useEffect(() => {
+    if (cajaMensajesRef.current) {
+      cajaMensajesRef.current.scrollTop = cajaMensajesRef.current.scrollHeight;
+    }
+  }, [mensajes, cargando, charlaCerrada]);
 
   const sugerencias = [
     { label: 'Rostro redondo', pregunta: '¿Qué aretes me quedan mejor si tengo rostro redondo?' },
-    { label: 'Evento de noche', pregunta: 'Busco algo elegante para una fiesta de noche' },
-    { label: 'Outfit negro', pregunta: '¿Qué aretes combinan con vestido negro?' },
-    { label: 'Regalos y precios', pregunta: '¿Qué opciones tienen para regalo y cuáles son los precios?' }
+    { label: 'Aretes florales', pregunta: '¿Qué diseños de flores o girasol tienen?' },
+    { label: 'Tonos azules o turquesa', pregunta: 'Busco aretes en color azul o turquesa' },
+    { label: '¡Ya decidí, quiero pedir!', pregunta: 'Ya me decidí por unos aretes, quiero hacer mi pedido' }
   ];
+
+  const reiniciarChat = () => {
+    setMensajes([mensajeInicial]);
+    setCharlaCerrada(false);
+    setInput('');
+  };
 
   const enviarMensaje = async (textoPregunta) => {
     const limpio = textoPregunta.trim();
-    if (!limpio || cargando) return;
+    if (!limpio || cargando || charlaCerrada) return;
 
     setMensajes((prev) => [...prev, { autor: 'usuario', texto: limpio, mostrarBotonWA: false }]);
     setInput('');
@@ -218,16 +238,29 @@ function StylistIA() {
       const res = await fetch(URL_BACKEND_CHAT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mensaje: limpio, historial: mensajes })
+        body: JSON.stringify({
+          mensaje: limpio,
+          historial: mensajes
+        })
       });
       if (!res.ok) throw new Error('Error en servidor');
       const datos = await res.json();
-      const resp = datos.respuesta || obtenerRespuestaLocalIA(limpio);
-      const llevarAWhatsApp = /whatsapp|nombre|pedido/i.test(resp);
+      let resp = datos.respuesta || obtenerRespuestaInteligente24(limpio, productos);
+
+      // Detecta si la IA o el cliente ya cerraron la decisión hacia WhatsApp
+      const debeCerrar = Boolean(datos.cerrarChat) || /(nos vemos en whatsapp|te espero en whatsapp|fue un gusto asesorarte|cualquier otra duda.*whatsapp|ya que lo pensaste.*whatsapp|hasta pronto)/i.test(resp);
+      const llevarAWhatsApp = debeCerrar || /whatsapp|nombre|pedido|carrito/i.test(resp);
+
       setMensajes((prev) => [...prev, { autor: 'ia', texto: resp, mostrarBotonWA: llevarAWhatsApp }]);
+      if (debeCerrar) setCharlaCerrada(true);
     } catch (err) {
-      const respLocal = obtenerRespuestaLocalIA(limpio);
+      const esCierreLocal = /(decidi|decidí|pedir|comprar|listo|gracias|chao|adios|adiós|whatsapp)/i.test(limpio);
+      const respLocal = esCierreLocal
+        ? '¡Qué emoción! 💖 Ya que tienes claro tu diseño ideal, te dejo el botón directo para concretar tu envío por WhatsApp. ¡Fue un gusto asesorarte, nos vemos allá! ✨🌸'
+        : obtenerRespuestaInteligente24(limpio, productos);
+
       setMensajes((prev) => [...prev, { autor: 'ia', texto: respLocal, mostrarBotonWA: true }]);
+      if (esCierreLocal) setCharlaCerrada(true);
     } finally {
       setCargando(false);
     }
@@ -237,10 +270,10 @@ function StylistIA() {
     <section id="asistente" className="seccion">
       <div className="contenedor">
         <h2>Stylist IA | Anelpg Bisutería</h2>
-        <p className="subtitulo-seccion">¿No sabes qué pedir o cuál diseño elegir? Cuéntanos tu ocasión, estilo o tipo de rostro y nuestra asesora virtual te recomienda los aretes ideales para ti.</p>
+        <p className="subtitulo-seccion">¿No sabes qué pedir o cuál diseño elegir? Cuéntanos tu ocasión, color favorito o tipo de rostro y nuestra asesora virtual te recomienda entre nuestros 24 diseños.</p>
 
         <div className="chat-contenedor">
-          <div className="chat-mensajes">
+          <div className="chat-mensajes" ref={cajaMensajesRef} style={{ whiteSpace: 'pre-line', scrollBehavior: 'smooth' }}>
             {mensajes.map((m, idx) => (
               <React.Fragment key={idx}>
                 <div className={`mensaje ${m.autor === 'ia' ? 'mensaje-ia' : 'mensaje-usuario'}`}>
@@ -248,43 +281,55 @@ function StylistIA() {
                 </div>
                 {m.mostrarBotonWA && (
                   <a
-                    href={`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent('Hola Anelpg Bisutería 💖 Vengo de tu página y quiero hacer un pedido')}`}
+                    href={`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent('Hola Anelpg Bisutería 💖 Vengo de la asesoría de Stylist IA y ya elegí mis aretes para hacer mi pedido')}`}
                     target="_blank"
                     rel="noreferrer"
-                    style={{ display: 'block', textAlign: 'center', margin: '10px', padding: '10px', background: '#25D366', color: 'white', fontWeight: 600, textDecoration: 'none', borderRadius: '20px' }}
+                    style={{ display: 'block', textAlign: 'center', margin: '10px', padding: '11px', background: '#25D366', color: 'white', fontWeight: 600, textDecoration: 'none', borderRadius: '20px' }}
                   >
                     Ir a WhatsApp y hacer mi pedido 💖
                   </a>
                 )}
               </React.Fragment>
             ))}
-            {cargando && <div className="mensaje mensaje-ia">Estoy pensando tu look... ✨</div>}
+            {cargando && <div className="mensaje mensaje-ia">Analizando los 24 diseños para ti... ✨</div>}
           </div>
 
-          <div className="chat-sugerencias">
-            {sugerencias.map((s) => (
-              <button key={s.label} type="button" className="chip-sugerencia" onClick={() => enviarMensaje(s.pregunta)}>
-                {s.label}
+          {!charlaCerrada ? (
+            <>
+              <div className="chat-sugerencias">
+                {sugerencias.map((s) => (
+                  <button key={s.label} type="button" className="chip-sugerencia" onClick={() => enviarMensaje(s.pregunta)}>
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+
+              <form className="chat-form" onSubmit={(e) => { e.preventDefault(); enviarMensaje(input); }}>
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ej: Busco aretes amarillos o de flores para regalo..."
+                  required
+                />
+                <button type="submit" className="btn-enviar-chat">Enviar</button>
+              </form>
+            </>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '14px', borderTop: '1px solid #eadfd5', background: '#faf6f2' }}>
+              <p style={{ fontSize: '0.9rem', color: '#6b5848', marginBottom: '10px' }}>
+                ✨ Asesoría finalizada · Te esperamos en WhatsApp para preparar tu pedido
+              </p>
+              <button type="button" onClick={reiniciarChat} className="btn-admin-nav" style={{ cursor: 'pointer' }}>
+                🔄 Iniciar nueva consulta
               </button>
-            ))}
-          </div>
-
-          <form className="chat-form" onSubmit={(e) => { e.preventDefault(); enviarMensaje(input); }}>
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ej: ¿Qué aretes combinan con vestido negro?..."
-              required
-            />
-            <button type="submit" className="btn-enviar-chat">Enviar</button>
-          </form>
+            </div>
+          )}
         </div>
       </div>
     </section>
   );
 }
-
 // ================= COMPONENTE: MODAL CARRITO =================
 function CarritoModal({ abierto, onCerrar, carrito, onCambiarCantidad, onEliminar, onVaciar }) {
   const [nombreComprador, setNombreComprador] = useState('');
@@ -617,20 +662,20 @@ function App() {
               <p className="subtitulo-seccion">Únete a nuestro Club VIP para enterarte primero de nuevos diseños artesanales, descuentos especiales y precios al por mayor.</p>
               <div className="botones-vip">
                 <a
-                  href={`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent('¡Hola Anelpg Bisutería! 💖 Quiero registrarme en el Club VIP para recibir ofertas y el catálogo nuevo.')}`}
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSeCTokTvUu_K7EyCyAuQcvhiFJy5g5h24dHJ91aeofPK5eTUw/viewform?usp=sharing&ouid=110271003313365521092"
                   target="_blank"
                   rel="noreferrer"
                   className="btn-principal"
                 >
-                  ✨ Quiero recibir ofertas (Registro VIP)
+                  ✨ Unirme al Club VIP (Formulario)
                 </a>
                 <a
-                  href={`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent('¡Hola! Quiero unirme a la comunidad VIP de Anelpg Bisutería 🛍️')}`}
+                  href="https://whatsapp.com/channel/0029Vb9s5Sgb4hdM1isDJ12N"
                   target="_blank"
                   rel="noreferrer"
                   className="btn-whatsapp-canal"
                 >
-                  💬 Unirme por WhatsApp
+                  💬 Unirme al Canal de WhatsApp
                 </a>
               </div>
             </div>

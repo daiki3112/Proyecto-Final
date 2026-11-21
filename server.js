@@ -57,7 +57,7 @@ REGLAS DE CONVERSACIÓN:
 - Habla cálido, dulce, cercano y profesional, usando emojis con buen gusto (✨, 💖, 🌸, 🌙, 💫).
 - Responde de forma concisa y natural (3 a 5 líneas máximo), recomendando siempre 2 o 3 aretes exactos de los 24 disponibles con su precio.
 - Adapta tu consejo al tipo de rostro, color de ropa, ocasión o presupuesto que mencione el cliente.
-- Si muestran intención de compra, regalo, cotización o pedido al por mayor, pídeles su nombre y diles que hagan clic en el botón verde de WhatsApp o los agreguen al carrito.`;
+- Si el cliente ya eligió un diseño, dice que lo va a pedir, agradece o lleva 3 o más mensajes conversando y ya tiene su recomendación clara, dile cálidamente algo como: "¡Listo, hermosa! Ya que lo pensaste y elegiste tu diseño ideal, toca el botón verde para ir a WhatsApp y cerrar tu pedido. ¡Fue un gusto asesorarte, nos vemos allá! 💖✨" y despídete para cerrar la charla.
 
 function elegirAzar(lista) {
   return lista[Math.floor(Math.random() * lista.length)];
@@ -132,8 +132,8 @@ function respuestaRespaldo(msg) {
   if (/(precio|precios|barato|economico|catalogo|todos|cuantos)/.test(t)) {
     return "Tenemos 24 referencias artesanales desde $20.000 (Aretes Medialuna) y $25.000 (Aretes Silvestres), hasta ediciones especiales de $55.000 como Aretes Trío Tropical y Perla Colgante ✨💖 ¿Cuál te llamó más la atención?";
   }
-  if (/(comprar|pedido|pedir|quiero|encargar|whatsapp)/.test(t)) {
-    return "¡Qué emoción! 💖 Para tomar tu pedido en Anelpg Bisutería, dime tu nombre y qué diseño deseas, o haz clic directo en el botón verde de WhatsApp para atenderte de inmediato ✨🌸";
+  if (/(comprar|pedido|pedir|quiero|encargar|whatsapp|decidi|me llevo)/.test(t)) {
+    return "¡Listo, hermosa! 💖 Ya que lo pensaste y tienes tu look definido, toca el botón verde de aquí abajo para ir directo a WhatsApp y concretar tu pedido. ¡Fue un gusto asesorarte, nos vemos allá! ✨🌸";
   }
 
   // 6. Comodín con variedad de los 24 diseños
