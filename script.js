@@ -106,7 +106,7 @@ function mostrarProductos(lista) {
         <p>${producto.descripcion}</p>
         <div class="pie-tarjeta">
           <span class="precio">${producto.precio}</span>
-          <button class="btn-pedir" data-id="${producto.id}">Lo quiero</button>
+         <button class="btn-pedir" data-id="${producto.id}">Agregar al carrito 🛍️</button>
         </div>
       </div>
     `;
@@ -132,19 +132,182 @@ const inputProducto = document.getElementById('productoInteres');
 const formContacto = document.getElementById('formContacto');
 const estadoForm = document.getElementById('estadoForm');
 
-// Autocompletar el formulario al dar clic en "Lo quiero"
+// ================= SISTEMA DE CARRITO DE COMPRAS REAL =================
+let carrito = JSON.parse(localStorage.getItem('anelpg_carrito')) || [];
+
+const btnAbrirCarrito = document.getElementById('btnAbrirCarrito');
+const modalCarrito = document.getElementById('modalCarrito');
+const btnCerrarCarrito = document.getElementById('btnCerrarCarrito');
+const listaCarrito = document.getElementById('listaCarrito');
+const totalCarrito = document.getElementById('totalCarrito');
+const contadorCarrito = document.getElementById('contadorCarrito');
+const resumenCarrito = document.getElementById('resumenCarrito');
+const btnVaciarCarrito = document.getElementById('btnVaciarCarrito');
+const btnPagarCarrito = document.getElementById('btnPagarCarrito');
+
+function parsearPrecio(precioTexto) {
+  return Number(String(precioTexto).replace(/[^0-9]/g, '')) || 0;
+}
+
+function formatearPesos(valor) {
+  return '$' + valor.toLocaleString('es-CO');
+}
+
+function guardarCarrito() {
+  localStorage.setItem('anelpg_carrito', JSON.stringify(carrito));
+  actualizarContadorCarrito();
+}
+
+function actualizarContadorCarrito() {
+  const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+  if (contadorCarrito) contadorCarrito.textContent = totalUnidades;
+}
+
+function renderizarCarrito() {
+  listaCarrito.innerHTML = '';
+
+  if (carrito.length === 0) {
+    listaCarrito.innerHTML = '<p class="carrito-vacio-msg">Tu carrito está vacío 🛍️<br>Explora el catálogo y agrega tus aretes favoritos.</p>';
+    resumenCarrito.style.display = 'none';
+    return;
+  }
+
+  resumenCarrito.style.display = 'block';
+  let sumaTotal = 0;
+
+  carrito.forEach((item) => {
+    const precioUnitario = parsearPrecio(item.precio);
+    const subtotal = precioUnitario * item.cantidad;
+    sumaTotal += subtotal;
+
+    const fila = document.createElement('div');
+    fila.className = 'item-carrito';
+    fila.innerHTML = `
+      <div class="item-carrito-info">
+        <img src="${item.imagen}" alt="${item.nombre}" class="item-carrito-img">
+        <div>
+          <strong>${item.nombre}</strong>
+          <div style="font-size: 0.85rem; color: #7a6655;">${item.precio} c/u</div>
+        </div>
+      </div>
+      <div class="item-carrito-controles">
+        <button type="button" class="btn-cant" data-accion="restar" data-id="${item.id}">-</button>
+        <span><strong>${item.cantidad}</strong></span>
+        <button type="button" class="btn-cant" data-accion="sumar" data-id="${item.id}">+</button>
+        <button type="button" class="btn-eliminar-item" data-accion="eliminar" data-id="${item.id}" title="Quitar del carrito">🗑️</button>
+      </div>
+    `;
+    listaCarrito.appendChild(fila);
+  });
+
+  totalCarrito.textContent = formatearPesos(sumaTotal);
+}
+
+// Agregar producto al carrito desde el catálogo
 gridProductos.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-pedir')) {
     const idSeleccionado = Number(e.target.dataset.id);
-    const areteElegido = productos.find(item => item.id === idSeleccionado);
+    const producto = productos.find(item => item.id === idSeleccionado);
 
-    if (areteElegido) {
-      inputProducto.value = areteElegido.nombre;
-      document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' });
+    if (producto) {
+      const existente = carrito.find(item => item.id === idSeleccionado);
+      if (existente) {
+        existente.cantidad += 1;
+      } else {
+        carrito.push({
+          id: producto.id,
+          nombre: producto.nombre,
+          precio: producto.precio,
+          imagen: producto.imagen,
+          cantidad: 1
+        });
+      }
+
+      guardarCarrito();
+
+      const textoOriginal = e.target.textContent;
+      e.target.textContent = '¡Agregado! ✓';
+      setTimeout(() => {
+        e.target.textContent = textoOriginal;
+      }, 1000);
     }
   }
 });
 
+// Controles dentro del carrito (+, -, eliminar)
+listaCarrito.addEventListener('click', (e) => {
+  const accion = e.target.dataset.accion;
+  const id = Number(e.target.dataset.id);
+  if (!accion || !id) return;
+
+  const indice = carrito.findIndex(item => item.id === id);
+  if (indice === -1) return;
+
+  if (accion === 'sumar') {
+    carrito[indice].cantidad += 1;
+  } else if (accion === 'restar') {
+    if (carrito[indice].cantidad > 1) {
+      carrito[indice].cantidad -= 1;
+    } else {
+      carrito.splice(indice, 1);
+    }
+  } else if (accion === 'eliminar') {
+    carrito.splice(indice, 1);
+  }
+
+  guardarCarrito();
+  renderizarCarrito();
+});
+
+btnAbrirCarrito.addEventListener('click', () => {
+  renderizarCarrito();
+  modalCarrito.classList.add('abierto');
+});
+
+btnCerrarCarrito.addEventListener('click', () => {
+  modalCarrito.classList.remove('abierto');
+});
+
+btnVaciarCarrito.addEventListener('click', () => {
+  carrito = [];
+  guardarCarrito();
+  renderizarCarrito();
+});
+
+// Botón de pago y confirmación de pedido por WhatsApp
+btnPagarCarrito.addEventListener('click', () => {
+  if (carrito.length === 0) return;
+
+  const nombreCliente = document.getElementById('nombreComprador').value.trim();
+  const metodoPago = document.getElementById('metodoPago').value;
+
+  if (!nombreCliente) {
+    alert('Por favor escribe tu nombre para preparar el envío 💖');
+    document.getElementById('nombreComprador').focus();
+    return;
+  }
+
+  let detalleProductos = '';
+  let totalGeneral = 0;
+
+  carrito.forEach((item) => {
+    const subtotal = parsearPrecio(item.precio) * item.cantidad;
+    totalGeneral += subtotal;
+    detalleProductos += `• ${item.cantidad}x ${item.nombre} (${formatearPesos(subtotal)})\n`;
+  });
+
+  const mensajeCompra = `¡Hola Anelpg Bisutería! 💖 Quiero confirmar mi compra:\n\n*Cliente:* ${nombreCliente}\n*Método de pago:* ${metodoPago}\n\n*Detalle del pedido:*\n${detalleProductos}\n*Total a pagar:* ${formatearPesos(totalGeneral)}`;
+
+  const urlPagoWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensajeCompra)}`;
+  window.open(urlPagoWhatsApp, '_blank');
+
+  carrito = [];
+  guardarCarrito();
+  renderizarCarrito();
+  modalCarrito.classList.remove('abierto');
+});
+
+actualizarContadorCarrito();
 // Enviar pedido por la API de WhatsApp (wa.me)
 formContacto.addEventListener('submit', (e) => {
   e.preventDefault();
