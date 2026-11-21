@@ -116,10 +116,10 @@ function mostrarProductos(lista) {
 }
 
 // Cargar productos desde localStorage o usar los iniciales
-let productos = JSON.parse(localStorage.getItem('anais_productos')) || productosIniciales;
+let productos = JSON.parse(localStorage.getItem('anelpg_productos')) || productosIniciales;
 
 function guardarProductosStorage() {
-  localStorage.setItem('anais_productos', JSON.stringify(productos));
+  localStorage.setItem('anelpg_productos', JSON.stringify(productos));
 }
 
 // Cargar todos los productos al abrir la tienda
@@ -153,7 +153,7 @@ formContacto.addEventListener('submit', (e) => {
   const producto = inputProducto.value.trim();
   const mensaje = document.getElementById('mensajeCliente').value.trim();
 
-  let textoPedido = `Hola Anais Bisutería, soy ${nombre}. `;
+  let textoPedido = `Hola Anelpg Bisutería, soy ${nombre}. `;
   if (producto !== '') {
     textoPedido += `Me interesan los aretes: *${producto}*. `;
   }
@@ -169,6 +169,7 @@ formContacto.addEventListener('submit', (e) => {
     estadoForm.textContent = '';
   }, 4000);
 });
+
 // Menu hamburguesa en version movil
 const btnMenu = document.getElementById('btnMenu');
 const navLinks = document.getElementById('navLinks');
@@ -182,12 +183,13 @@ navLinks.querySelectorAll('a, button').forEach((item) => {
     navLinks.classList.remove('activo');
   });
 });
+
 // Sistema de Cuentas (Login + Registro) y Panel Admin
 const cuentasDefault = [
-  { nombre: 'Administrador', usuario: 'admin', clave: 'anais2026' }
+  { nombre: 'Administrador', usuario: 'admin', clave: 'anelpg2026' }
 ];
 
-let cuentasRegistradas = JSON.parse(localStorage.getItem('anais_cuentas')) || cuentasDefault;
+let cuentasRegistradas = JSON.parse(localStorage.getItem('anelpg_cuentas')) || cuentasDefault;
 
 const btnAdminNav = document.getElementById('btnAbrirAdmin');
 const modalAdmin = document.getElementById('modalAdmin');
@@ -223,7 +225,7 @@ tabRegistro.addEventListener('click', () => {
 
 // Verificar sesión activa y actualizar botón de la barra
 function verificarSesion() {
-  const usuarioActivo = JSON.parse(localStorage.getItem('anais_usuario_activo'));
+  const usuarioActivo = JSON.parse(localStorage.getItem('anelpg_usuario_activo'));
 
   if (usuarioActivo) {
     btnAdminNav.textContent = `Hola, ${usuarioActivo.nombre}`;
@@ -261,7 +263,7 @@ formLogin.addEventListener('submit', (e) => {
   );
 
   if (cuentaEncontrada) {
-    localStorage.setItem('anais_usuario_activo', JSON.stringify(cuentaEncontrada));
+    localStorage.setItem('anelpg_usuario_activo', JSON.stringify(cuentaEncontrada));
     errorLogin.textContent = '';
     formLogin.reset();
     verificarSesion();
@@ -288,8 +290,8 @@ formRegistro.addEventListener('submit', (e) => {
 
   const nuevaCuenta = { nombre, usuario, clave };
   cuentasRegistradas.push(nuevaCuenta);
-  localStorage.setItem('anais_cuentas', JSON.stringify(cuentasRegistradas));
-  localStorage.setItem('anais_usuario_activo', JSON.stringify(nuevaCuenta));
+  localStorage.setItem('anelpg_cuentas', JSON.stringify(cuentasRegistradas));
+  localStorage.setItem('anelpg_usuario_activo', JSON.stringify(nuevaCuenta));
 
   formRegistro.reset();
   verificarSesion();
@@ -297,7 +299,7 @@ formRegistro.addEventListener('submit', (e) => {
 
 // Cerrar sesión
 btnCerrarSesion.addEventListener('click', () => {
-  localStorage.removeItem('anais_usuario_activo');
+  localStorage.removeItem('anelpg_usuario_activo');
   verificarSesion();
 });
 
