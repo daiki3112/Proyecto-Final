@@ -879,3 +879,122 @@ footer {
   object-fit: cover;
   border: 1.5px solid #c89d54;
 }
+/* ================= CARRITO DE COMPRAS Y PAGOS ================= */
+.btn-carrito-nav {
+  background-color: #9c6b3b;
+  color: #ffffff;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-carrito-nav:hover {
+  background-color: #7d542c;
+  transform: translateY(-1px);
+}
+
+.modal-carrito-caja {
+  max-width: 520px;
+}
+
+.lista-carrito {
+  max-height: 260px;
+  overflow-y: auto;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-carrito {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: #faf6f0;
+  border: 1px solid #e6dccf;
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.item-carrito-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.item-carrito-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.item-carrito-controles {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-cant {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #cbbba8;
+  background-color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-eliminar-item {
+  background: none;
+  border: none;
+  color: #c0392b;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.resumen-carrito {
+  border-top: 1px solid #e6dccf;
+  padding-top: 12px;
+}
+
+.fila-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.15rem;
+  color: #3d2e24;
+}
+
+.select-pago {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #d8cbb8;
+  background-color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.acciones-carrito {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.acciones-carrito button {
+  flex: 1;
+}
+
+.carrito-vacio-msg {
+  text-align: center;
+  color: #7a6655;
+  padding: 1.5rem 0;
+}

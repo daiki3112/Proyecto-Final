@@ -35,7 +35,10 @@
         <a href="#catalogo">Catálogo</a>
         <a href="#asistente">Asistente IA</a>
         <a href="#contacto">Contacto</a>
-        <button class="btn-admin-nav" id="btnAbrirAdmin">Mi Cuenta</button>
+        <button type="button" class="btn-carrito-nav" id="btnAbrirCarrito">
+          🛍️ Carrito (<span id="contadorCarrito">0</span>)
+        </button>
+        <button type="button" class="btn-admin-nav" id="btnAbrirAdmin">Mi Cuenta</button>
       </nav>
     </div>
   </header>
@@ -66,8 +69,8 @@
 
     <section id="asistente" class="seccion">
       <div class="contenedor">
-        <h2>Stylist IA | Anelpg Bisutería</h2>
-        <p class="subtitulo-seccion">¿Dudas sobre qué aretes te favorecen más o cómo combinarlos? Chatea con nuestra asesora virtual.</p>
+       <h2>Stylist IA | Anelpg Bisutería</h2>
+        <p class="subtitulo-seccion">¿No sabes qué pedir o cuál diseño elegir? Cuéntanos tu ocasión, estilo o tipo de rostro y nuestra asesora virtual te recomienda los aretes ideales para ti.</p>
         
         <div class="chat-contenedor">
           <div class="chat-mensajes" id="chatMensajes">
@@ -203,7 +206,45 @@
     </div>
   </div>
 
- <script src="script.js"></script>
+  <!-- Ventana Modal del Carrito de Compras y Pagos -->
+  <div class="modal-fondo" id="modalCarrito">
+    <div class="modal-caja modal-carrito-caja">
+      <button class="btn-cerrar-modal" id="btnCerrarCarrito" aria-label="Cerrar">&times;</button>
+      <h3>🛍️ Tu Carrito | Anelpg Bisutería</h3>
+      <p class="subtitulo-modal">Revisa tus piezas artesanales antes de pagar.</p>
+
+      <div class="lista-carrito" id="listaCarrito"></div>
+
+      <div class="resumen-carrito" id="resumenCarrito">
+        <div class="fila-total">
+          <span>Total a pagar:</span>
+          <strong id="totalCarrito">$0</strong>
+        </div>
+
+        <div class="grupo-input" style="margin-top: 12px;">
+          <label for="nombreComprador">Tu nombre para el envío</label>
+          <input type="text" id="nombreComprador" placeholder="Ej: Camila Ríos" required>
+        </div>
+
+        <div class="grupo-input">
+          <label for="metodoPago">Método de pago preferido</label>
+          <select id="metodoPago" class="select-pago">
+            <option value="Nequi">Nequi</option>
+            <option value="Daviplata">Daviplata</option>
+            <option value="Transferencia Bancolombia">Transferencia Bancolombia</option>
+            <option value="Pago contra entrega (Bogotá)">Pago contra entrega (Bogotá)</option>
+          </select>
+        </div>
+
+        <div class="acciones-carrito">
+          <button type="button" class="btn-secundario" id="btnVaciarCarrito">Vaciar carrito</button>
+          <button type="button" class="btn-principal" id="btnPagarCarrito">💳 Pagar y Confirmar Pedido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
   <script src="chatbot.js"></script>
 </body>
 </html>
